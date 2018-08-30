@@ -1,11 +1,11 @@
 import com.experitest.client.Client;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class Chrome extends baseTest {
 
 
-    @BeforeClass
+    @BeforeAll
     public void setupChrome(){
         client.launch("chrome:fvsdgvd",true,true);
     }
