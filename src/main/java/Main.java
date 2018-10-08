@@ -22,15 +22,17 @@ public class Main {
         //1. Choose on what devices to run:
         // Can add devices SN or Name (without ADB:)
         //todo: make sure devices can't be added twice
-        chooseSpesificDevices=true;
+        chooseSpesificDevices=false;
         Choosedevices.add("668bbfe5");
         Choosedevices.add("adb:HUAWEI BKL-L09");
         //todo: run with all devices without choose them in the beginning
         //2. Choose what is the run length
         //Run by time or choose number of Rounds
-        Runby_NumberOfRounds =false; //Or choose the length time you want
+        Runby_NumberOfRounds =true; //Or choose the length time you want
         NumberOfRoundsToRun=1;
         TimeToRun=2 * 60; //hours * minutes
+        //3. choose classes or packages to run with
+        testsSuites = TestsSuites.LONGRUN;
 
 
 
@@ -42,6 +44,9 @@ public class Main {
             e.printStackTrace();
         }
         //2: Create threads for each device
+        for(Device device : devices) {
+            Runner r = new Runner(device);
+        }
     }
 
 
@@ -59,6 +64,8 @@ public class Main {
 
     public static boolean Devices;
     public static boolean Grid=false;
+    //Tests
+    protected static TestsSuites testsSuites;
 
 
     //**Local**
@@ -86,10 +93,16 @@ public class Main {
         //print the devices list
         System.out.println("Devices List info: "+delimiter);
         System.out.println("Number of Devices in this run: "+devices.size());
+        String PrintDevicesInfo="";
+        String PrintDeviceSN="";
         for (int i = 0; i < devices.size(); i++) {
-            System.out.println("#"+(i+1)+" " +devices.get(i).toString()+delimiter);
-
+            PrintDevicesInfo+="#"+(i+1)+" " +devices.get(i).toString()+delimiter;
+            PrintDeviceSN+=devices.get(i).getSerialnumber()+delimiter;
         }
+        //TODO: add this tow lines to the main report
+        System.out.println(PrintDeviceSN);
+        System.out.println(PrintDevicesInfo);
+
    }
 
 

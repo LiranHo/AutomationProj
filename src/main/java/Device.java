@@ -1,19 +1,19 @@
 
 
 public class Device {
-    protected String serialnumber;
-    protected String name;
-    protected String os;
-    protected String version;
-    protected String model;
-    protected String category;
-    protected String manufacture;
-    protected String remote;
-    protected String reservedtoyou;
+    private String serialnumber;
+    private String name;
+    private String os;
+    private String version;
+    private String model;
+    private String category;
+    private String manufacture;
+    private String remote;
+    private String reservedtoyou;
 
 
 
-    public Device(String serialnumber, String name, String os, String version , String model, String category,  String manufacture, String remote, String reservedtoyou){
+    private Device(String serialnumber, String name, String os, String version , String model, String category,  String manufacture, String remote, String reservedtoyou){
         this.serialnumber =serialnumber;
         this.name =name;
         this.os =os;
@@ -46,6 +46,11 @@ public class Device {
 
     return deviceParameter;
 
+    }
+
+
+    public String getSerialnumber(){
+        return this.serialnumber;
     }
 
 }

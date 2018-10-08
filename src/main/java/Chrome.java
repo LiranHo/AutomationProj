@@ -6,12 +6,15 @@ public class Chrome extends baseTest {
 
 
     @BeforeAll
-    public void setupChrome(){
-        client.launch("chrome:fvsdgvd",true,true);
+    public static void setupChrome(){
+        System.err.println("***********************************test chrome");
+        client.launch("chrome:ebay.com",true,true);
     }
 
     @Test
-    public void newTest3(){
+    public void newTest(){
+        System.err.println("***********************************test chrome");
+        client.sleep(1000);
 
     }
 

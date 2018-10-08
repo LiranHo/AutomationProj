@@ -8,21 +8,23 @@ import org.junit.jupiter.api.Test;
 
 public class baseTest {
 //    protected Device devices = Devices.A0235;  //Enum
-    protected String host = "localhost";
-    protected int port = 8889;
-    protected String projectBaseDirectory = "C:\\Users\\liran.hochman\\workspace\\project2";
-    protected Client client = null;
+    protected static String host = "localhost";
+    protected static int port = 8889;
+    protected static String projectBaseDirectory = "C:\\Users\\liran.hochman\\workspace\\project2";
+    protected static Client client = null;
 
     @BeforeAll
-    public void setup(){
+    public static void setup(){
         client = new Client(host, port, true);
+        System.out.println("Client SessionID: "+client.getSessionID());
         client.setProjectBaseDirectory(projectBaseDirectory);
         client.setReporter("xml", "reports", "Untitled");
     }
 
     @BeforeEach
-    public void before(){
-        client.setDevice("");
+    public void before() {
+        client.waitForDevice("@os='android'",10000);
+        System.err.println("***********************************BaseTest Before Each");
     }
 
 
@@ -33,7 +35,7 @@ public class baseTest {
 
 
     @AfterAll
-    public void after(){
+    public static void after(){
 
     }
 
