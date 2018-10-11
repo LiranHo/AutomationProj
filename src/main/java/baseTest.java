@@ -11,20 +11,22 @@ public class baseTest {
     protected static String host = "localhost";
     protected static int port = 8889;
     protected static String projectBaseDirectory = "C:\\Users\\liran.hochman\\workspace\\project2";
-    protected static Client client = null;
+    protected Client client = null;
 
     @BeforeAll
     public static void setup(){
-        client = new Client(host, port, true);
-        System.out.println("Client SessionID: "+client.getSessionID());
-        client.setProjectBaseDirectory(projectBaseDirectory);
-        client.setReporter("xml", "reports", "Untitled");
+
     }
 
     @BeforeEach
     public void before() {
-        client.waitForDevice("@os='android'",10000);
+        client = new Client(host, port, true);
+        String serial=Thread.currentThread().getName();
+        client.waitForDevice("@serialnumber='"+serial+"'",10000);
+        System.out.println("Client SessionID: "+client.getSessionID());
         System.err.println("***********************************BaseTest Before Each");
+        client.setProjectBaseDirectory(projectBaseDirectory);
+        client.setReporter("xml", "reports", "Untitled");
     }
 
 

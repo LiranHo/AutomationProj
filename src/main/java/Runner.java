@@ -20,8 +20,9 @@ import java.util.List;
 
 
 //this class runs each device in separate Thread
-public class Runner extends  Thread{
+public class Runner implements Runnable{
     protected Device device;
+    protected String ThreadName;
     //Parameters for run by rounds
     protected int CountRounds=0;
     //Parameters for run by time
@@ -29,18 +30,18 @@ public class Runner extends  Thread{
     protected long TimePassedSinceStart;
     protected long CurrentTime;
 
-    Runner(Device d){
+    Runner(Device d ){
         this.device=d;
-        this.run();
+        this.ThreadName=device.getSerialnumber();
     }
 
     public void run() {
-
-
+        Thread.currentThread().setName(device.getSerialnumber());
+        System.out.println("current t: " + Thread.currentThread().getName());
         //TODO: add report for each device
         //Run by selected ROUNDS
         if(Main.Runby_NumberOfRounds){
-            while(Main.NumberOfRoundsToRun>=CountRounds){
+            while(Main.NumberOfRoundsToRun>CountRounds){
                 runTest(Main.testsSuites);
                 CountRounds++;
             }
@@ -62,7 +63,6 @@ public class Runner extends  Thread{
     private void runTest(TestsSuites testsClasses){
         // https://junit.org/junit5/docs/current/user-guide/#launcher-api
         // https://stackoverflow.com/questions/39111501/whats-the-equivalent-of-org-junit-runner-junitcore-runclasses-in-junit-5
-
         Result result;
 
 //        result = JUnitCore.runClasses(JunitTestSuite_android.class);
@@ -73,17 +73,16 @@ public class Runner extends  Thread{
 
         Launcher launcher = LauncherFactory.create();
 
+
         TestPlan testPlan = launcher.discover(request);
 
         /////////////////////////////////////////////////////////////
-
 
         // Register a listener of your choice
         SummaryGeneratingListener listener = new SummaryGeneratingListener();
         launcher.registerTestExecutionListeners(listener);
 
-        launcher.execute(request);
-
+        launcher.execute(request, listener);
         TestExecutionSummary summary = listener.getSummary();
         long testFoundCount = summary.getTestsFoundCount();
         List<TestExecutionSummary.Failure> failures = summary.getFailures();

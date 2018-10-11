@@ -1,4 +1,5 @@
 import com.experitest.client.Client;
+import com.experitest.client.GridClient;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -13,42 +14,58 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
 
 
 public class Main {
 
-    public static void main(String[] args){
-        //***Init The Test***
-        //1. Choose on what devices to run:
+    public static void main(String[] args) throws InterruptedException {
+        //T: ***Init The Test***
+        //T: 1.Choose the platform to run (if Grid is true choose the cloud user)
+        Grid= true;
+        cloudUser = CloudUsers.LiranCloud;
+        //T: 2. Choose on what devices to run:
         // Can add devices SN or Name (without ADB:)
-        //todo: make sure devices can't be added twice
+        //TODO: make sure devices can't be added twice
         chooseSpesificDevices=false;
-        Choosedevices.add("668bbfe5");
-        Choosedevices.add("adb:HUAWEI BKL-L09");
-        //todo: run with all devices without choose them in the beginning
-        //2. Choose what is the run length
+        /**/Choosedevices.add("668bbfe5");
+        /**/Choosedevices.add("adb:HUAWEI BKL-L09");
+        //TODO: run with all devices without choose them in the beginning
+        //T: 3. Choose the run length
         //Run by time or choose number of Rounds
-        Runby_NumberOfRounds =true; //Or choose the length time you want
-        NumberOfRoundsToRun=1;
-        TimeToRun=2 * 60; //hours * minutes
-        //3. choose classes or packages to run with
+        //Or choose the length time you want
+        Runby_NumberOfRounds =true;
+        /**/NumberOfRoundsToRun=1;
+        TimeToRun= 60 * 60 * 2; //Seconds * minutes * hours
+        //T: 4. choose classes or packages to run with
         testsSuites = TestsSuites.LONGRUN;
 
 
 
-        //1: get devices list and create Hashmap
+        //T: ***Start To Prepare The Test***
+        //T: TODO: 1:Create preparation for Report ;  Create directory, sample Start time, create test report
+
+        //T: 2: get devices list and create Hashmap
         try {
             initDevicesList();
         } catch (Exception e) {
             System.err.println("Failed to initDevicesList()  ~  Location: class main");
             e.printStackTrace();
         }
-        //2: Create threads for each device
+
+
+        //T: TODO: 3: Print this-run properties
+        //T: 4: Create threads for each device and start to Run
+        ExecutorService executorService = Executors.newFixedThreadPool(Main.devices.size());
         for(Device device : devices) {
             Runner r = new Runner(device);
+            executorService.submit(r);
         }
-    }
 
+        System.err.println("End of Threads");
+//        if(executorService.isShutdown())
+//        executorService.awaitTermination(1, TimeUnit.DAYS);
+    }
 
 
     //***Init Test Vars***
@@ -73,6 +90,9 @@ public class Main {
     protected static String local_host = "localhost";
     protected static int local_port = 8889;
 
+    //**Grid**
+    protected static CloudUsers cloudUser;
+
     //***Methods***
 
     public static void initDevicesList() throws Exception {
@@ -85,6 +105,10 @@ public class Main {
             client.releaseClient();
 
         } else if (Grid){
+            GridClient gridClient = new GridClient(cloudUser.userName, cloudUser.Password, cloudUser.projectName, cloudUser.grid_domain, cloudUser.grid_port, cloudUser.isSecured);
+            devices = getDevices(gridClient.getDevicesInformation());
+//            client.releaseClient();
+
 //           gridClient = new GridClient(userName, Password, projectName, grid_domain, grid_port, isSecured);
 //             devices = getDevices(gridClient.getDevicesInformation());
 
@@ -131,14 +155,12 @@ public class Main {
 
                 //if we don't want to use all devices, check if the device is in the list of device
                 if(chooseSpesificDevices) {
-                    //TODO: change to foreach
-                    for (int j = 0; j < Choosedevices.size(); j++) {
-                        String DeviceSN = Choosedevices.get(j);
-                        if(eElement.getAttribute("serialnumber").equalsIgnoreCase(DeviceSN)
-                                ||eElement.getAttribute("name").toLowerCase().contains(DeviceSN.toLowerCase())){
-                            devicesMap.add(device);
-                    }
 
+                    for(String DeviceSN: Choosedevices){
+                        if(eElement.getAttribute("serialnumber").equalsIgnoreCase(DeviceSN)
+                                ||eElement.getAttribute("name").toLowerCase().contains(DeviceSN.toLowerCase())) {
+                            devicesMap.add(device);
+                        }
                     }
                 }else { //if use all devices is true
                     devicesMap.add(device);

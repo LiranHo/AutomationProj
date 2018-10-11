@@ -13,7 +13,7 @@ public class Device {
 
 
 
-    private Device(String serialnumber, String name, String os, String version , String model, String category,  String manufacture, String remote, String reservedtoyou){
+    protected Device(String serialnumber, String name, String os, String version , String model, String category,  String manufacture, String remote, String reservedtoyou){
         this.serialnumber =serialnumber;
         this.name =name;
         this.os =os;
