@@ -11,7 +11,10 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -22,12 +25,16 @@ public class Main {
     public static void main(String[] args) throws InterruptedException {
         //T: ***Init The Test***
         //T: 1.Choose the platform to run (if Grid is true choose the cloud user)
-        Grid= true;
-        cloudUser = CloudUsers.LiranCloud;
+        Grid= false;
+        cloudUser = CloudUsers.LiranQaCloud;
         //T: 2. Choose on what devices to run:
         // Can add devices SN or Name (without ADB:)
         //TODO: make sure devices can't be added twice
+        //TOdO: add option to run on random X devices
         chooseSpesificDevices=false;
+        /**/Choosedevices.add("29cbec617d04");
+        /**/Choosedevices.add("2bc6d8279805");
+
         /**/Choosedevices.add("668bbfe5");
         /**/Choosedevices.add("adb:HUAWEI BKL-L09");
         //TODO: run with all devices without choose them in the beginning
@@ -41,13 +48,18 @@ public class Main {
         testsSuites = TestsSuites.LONGRUN;
 
 
-
         //T: ***Start To Prepare The Test***
         //T: TODO: 1:Create preparation for Report ;  Create directory, sample Start time, create test report
+        startTime = new SimpleDateFormat("dd.MM.yyyy - HH.mm.ss").format(new java.util.Date());
+        innerDirectoryPath = createNewDir(projectBaseDirectory, startTime); //create new directory for this test run
+        report = Reporter.Reporter ("MainReport",innerDirectoryPath);
+        report.addRowToReport("Type","Session ID","Test Name","Device SN","Status","Report URL");
+
 
         //T: 2: get devices list and create Hashmap
+        String devicesInitInfo="";
         try {
-            initDevicesList();
+            devicesInitInfo=initDevicesList();
         } catch (Exception e) {
             System.err.println("Failed to initDevicesList()  ~  Location: class main");
             e.printStackTrace();
@@ -55,6 +67,8 @@ public class Main {
 
 
         //T: TODO: 3: Print this-run properties
+        //Create Run Info File:
+        RunInfoFile("devices Init Info",devicesInitInfo);
         //T: 4: Create threads for each device and start to Run
         ExecutorService executorService = Executors.newFixedThreadPool(Main.devices.size());
         for(Device device : devices) {
@@ -93,9 +107,19 @@ public class Main {
     //**Grid**
     protected static CloudUsers cloudUser;
 
+    //**Report**
+    public static String projectBaseDirectory = "E:\\Reports\\Main Project Test Report";
+    public static String Repository_project="C:\\Users\\liran.hochman\\workspace\\project2";
+    public static String innerDirectoryPath = "";
+    public static String startTime;
+    public static Reporter report;
+
+
+
     //***Methods***
 
-    public static void initDevicesList() throws Exception {
+    public static String initDevicesList() throws Exception {
+        String devicesInitInfo="";
         /* create client and get the connected devices list using "getdevicesinformation
          * afterwards, parse the xml and create object-device to each device
          */
@@ -120,13 +144,15 @@ public class Main {
         String PrintDevicesInfo="";
         String PrintDeviceSN="";
         for (int i = 0; i < devices.size(); i++) {
-            PrintDevicesInfo+="#"+(i+1)+" " +devices.get(i).toString()+delimiter;
+            PrintDevicesInfo+="#"+(i+1)+" " +devices.get(i).toString()+delimiter+delimiter;
             PrintDeviceSN+=devices.get(i).getSerialnumber()+delimiter;
         }
         //TODO: add this tow lines to the main report
         System.out.println(PrintDeviceSN);
         System.out.println(PrintDevicesInfo);
 
+        devicesInitInfo+="Devices List info: "+delimiter+"Number of Devices in this run: "+devices.size()+delimiter+PrintDeviceSN+delimiter+PrintDevicesInfo;
+        return devicesInitInfo;
    }
 
 
@@ -191,6 +217,31 @@ public class Main {
         return nodeList;
 
     }
+
+    //create new directory, get the directory path and the new folder name
+    public static String createNewDir(String path, String folderName) {
+        File newDir = new File(path + "\\" + folderName);
+        String createdPath = path + "\\" + folderName;
+        //create
+        if (!newDir.exists()) {
+            System.out.println("creating directory: " + newDir.getName());
+            try {
+                newDir.mkdirs();
+            } catch (SecurityException se) {
+                se.printStackTrace();
+            }
+        }
+        return createdPath;
+    }
+
+    //Create Info File
+    public static void RunInfoFile(String InfoFileName, String content){
+        PrintWriter infoFile = Reporter.CreateReportFile(innerDirectoryPath,InfoFileName,"txt");
+        infoFile.println(content);
+        infoFile.flush();
+
+    }
+
 
     //Finals - aid variables
     public static final String delimiter = "\r\n";

@@ -22,6 +22,9 @@ public class Chrome extends baseTest {
 
 
     public void EriBankNONInstrumentedTest1() {
+
+    }
+    public void EriBankNONInstrumentedTest3() {
         for(int i=0;i<50;i++){
             System.out.printf("%s: %s: %s%n", i, Thread.currentThread().getName(), client.getSessionID());
             client.swipe("left",1);
@@ -37,7 +40,8 @@ public class Chrome extends baseTest {
         String userName = "company";
         String password = "company";
         client.deviceAction("Portrait");
-        client.launch("com.experitest.ExperiBank/.LoginActivity", false, true);
+        client.install("C:\\Users\\liran.hochman\\Downloads\\apk\\eribank.apk", true, false);
+        client.launch("com.experitest.ExperiBank/.LoginActivity", true, true);
         System.out.println("launch 1 ");
         client.deviceAction("Home");
         client.launch("com.experitest.ExperiBank/.LoginActivity", false, true);
