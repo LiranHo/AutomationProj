@@ -1,6 +1,6 @@
 
 
-public class Device {
+public class Device extends Thread{
     private String serialnumber;
     private String name;
     private String os;
@@ -10,6 +10,7 @@ public class Device {
     private String manufacture;
     private String remote;
     private String reservedtoyou;
+    private String deviceFolderPath="";
 
 
 
@@ -46,6 +47,14 @@ public class Device {
 
     return deviceParameter;
 
+    }
+
+    protected void setDeviceFolderPath(String path){
+        this.deviceFolderPath=path;
+    }
+
+    public String getDeviceFolderPath(){
+        return this.deviceFolderPath;
     }
 
 

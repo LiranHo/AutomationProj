@@ -1,25 +1,32 @@
-import com.experitest.client.Client;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
-public class Chrome extends baseTest {
+@DisplayName("Chrome Test")
+public class Chrome extends BaseTest {
 
 
     @BeforeAll
-    public static void setupChrome(){
-        System.err.println("***********************************test chrome");
-//        client.launch("chrome:ebay.com",true,true);
+    public static void setup1(){
+        System.err.println("Before all method - setup |||| Chrome");
+
+    }
+
+    @BeforeEach
+    public void before1() {
+        super.setup();
+        System.err.println("Before each method - before |||| Chrome");
     }
 
     @Test
-    public void newTest(){
+    public void newTest1() {
         System.err.println("***********************************test chrome");
         client.sleep(1000);
         EriBankNONInstrumentedTest1();
 
-
     }
-
+        @AfterEach
+        public void tearDown1() {
+            System.err.println("Before each method - before |||| Chrome");
+        }
 
     public void EriBankNONInstrumentedTest1() {
 
@@ -106,8 +113,6 @@ public class Chrome extends baseTest {
             String str5 = client.getMonitorsData();
             String str6 = client.getDeviceLog();
         }
-
-
 
 
 }

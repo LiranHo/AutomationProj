@@ -15,6 +15,7 @@ import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
+import sun.nio.ch.ThreadPool;
 
 import java.util.List;
 
@@ -57,6 +58,8 @@ public class Runner implements Runnable{
             while (TimePassedSinceStart<=Main.TimeToRun);
 
         }
+
+//        Thread.currentThread().
 
     }
 

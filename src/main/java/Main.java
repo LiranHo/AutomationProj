@@ -4,6 +4,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import sun.nio.ch.ThreadPool;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -32,11 +33,10 @@ public class Main {
         //TODO: make sure devices can't be added twice
         //TOdO: add option to run on random X devices
         chooseSpesificDevices=false;
-        /**/Choosedevices.add("29cbec617d04");
-        /**/Choosedevices.add("2bc6d8279805");
-
         /**/Choosedevices.add("668bbfe5");
-        /**/Choosedevices.add("adb:HUAWEI BKL-L09");
+//        /**/Choosedevices.add("2bc6d8279805");
+//        /**/Choosedevices.add("668bbfe5");
+//        /**/Choosedevices.add("adb:HUAWEI BKL-L09");
         //TODO: run with all devices without choose them in the beginning
         //T: 3. Choose the run length
         //Run by time or choose number of Rounds
@@ -45,7 +45,7 @@ public class Main {
         /**/NumberOfRoundsToRun=1;
         TimeToRun= 60 * 60 * 2; //Seconds * minutes * hours
         //T: 4. choose classes or packages to run with
-        testsSuites = TestsSuites.LONGRUN;
+        testsSuites = TestsSuites.OneTest_forTest;
 
 
         //T: ***Start To Prepare The Test***
@@ -71,14 +71,35 @@ public class Main {
         RunInfoFile("devices Init Info",devicesInitInfo);
         //T: 4: Create threads for each device and start to Run
         ExecutorService executorService = Executors.newFixedThreadPool(Main.devices.size());
+        ArrayList<Future> futures = new ArrayList<>();
         for(Device device : devices) {
             Runner r = new Runner(device);
-            executorService.submit(r);
+            futures.add(executorService.submit(r));
+        }
+//            System.out.println(a);
+//            try {
+//                a.get();
+//                System.out.println("a.isDone() "+ a.isDone());
+//            } catch (Exception e) { e.printStackTrace(); }
+
+//        while(true){
+//            for(Future a : futures){
+//                if(!a.isDone());
+//            }
+//        }
+        System.err.println("End of Threads");
+        int i = 0;
+        for(Future f : futures) {
+            try {
+                f.get();
+                System.out.println(futures.get(i) + " Future # "+i+" is ended | from "+futures.size()+" of futures");
+                i++;
+            } catch (ExecutionException e) {e.printStackTrace();}
         }
 
-        System.err.println("End of Threads");
-//        if(executorService.isShutdown())
-//        executorService.awaitTermination(1, TimeUnit.DAYS);
+        executorService.shutdownNow();
+//        System.exit(0);
+
     }
 
 
@@ -147,7 +168,7 @@ public class Main {
             PrintDevicesInfo+="#"+(i+1)+" " +devices.get(i).toString()+delimiter+delimiter;
             PrintDeviceSN+=devices.get(i).getSerialnumber()+delimiter;
         }
-        //TODO: add this tow lines to the main report
+
         System.out.println(PrintDeviceSN);
         System.out.println(PrintDevicesInfo);
 
@@ -185,11 +206,19 @@ public class Main {
                     for(String DeviceSN: Choosedevices){
                         if(eElement.getAttribute("serialnumber").equalsIgnoreCase(DeviceSN)
                                 ||eElement.getAttribute("name").toLowerCase().contains(DeviceSN.toLowerCase())) {
+                            //Create new folder for this device
+                            device.setDeviceFolderPath( Main.createNewDir(Main.innerDirectoryPath, eElement.getAttribute("serialnumber")));
                             devicesMap.add(device);
+
+
+
                         }
                     }
                 }else { //if use all devices is true
+                    //Create new folder for this device
+                    device.setDeviceFolderPath( Main.createNewDir(Main.innerDirectoryPath, eElement.getAttribute("serialnumber")));
                     devicesMap.add(device);
+
                 }
             }
 
@@ -241,6 +270,17 @@ public class Main {
         infoFile.flush();
 
     }
+
+
+    public static Device searchDeviceBySN(String SN) {
+        for (Device device : devices) {
+            if (device.getSerialnumber().equals(SN)) {
+                return device;
+            }
+        }
+        return null;
+    }
+
 
 
     //Finals - aid variables

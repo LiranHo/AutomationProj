@@ -11,6 +11,8 @@ import java.util.List;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
 public enum TestsSuites {
+    OneTest_forTest(Chrome.class),
+//    OneTest_forTest(baseTest.class, Chrome.class),
     LONGRUN(Chrome.class, chrometest1.class),
     SHORTRUN(Chrome.class, chrometest1.class),
     Packgess("Package1", "Package1"),
