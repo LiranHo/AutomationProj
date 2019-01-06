@@ -1,4 +1,4 @@
-
+package Project;
 
 public class Device extends Thread{
     private String serialnumber;
@@ -61,5 +61,9 @@ public class Device extends Thread{
     public String getSerialnumber(){
         return this.serialnumber;
     }
+    public String getVersion(){ return this.version;}
+    public Boolean IsDeviceRemote(){ return Boolean.valueOf(this.remote);}
+
+
 
 }

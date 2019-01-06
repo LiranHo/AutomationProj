@@ -1,15 +1,19 @@
+package Project.Reports;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import Project.*;
+
 
 //singleton
-public class Reporter {
+public class Reporter extends ReportBasics {
     public static void main(String[] args) {
-        Reporter r = Reporter.Reporter ("reportname1","E:\\Files - Liran - 2");
-        Reporter r2 = Reporter.Reporter ("reportname2","E:\\Files - Liran - 2");
+//        Project.Reports.Reporter r = Project.Reports.Reporter.Project.Reports.Reporter ("reportname1","E:\\Project.Reports.Files - Liran - 2");
+//        Project.Reports.Reporter r2 = Project.Reports.Reporter.Project.Reports.Reporter ("reportname2","E:\\Project.Reports.Files - Liran - 2");
 
     }
     private static Reporter report= null;
@@ -26,7 +30,7 @@ public class Reporter {
         //Crete new report
         this.file=CreateReportFile(projDir, FileName+" ; "+ Main.startTime, "csv");
         //print first line to this report
-//        this.file.println("### Report: "+", "+FileName+" , "+Main.startTime+" ###");
+//        this.file.println("### Report: "+", "+FileName+" , "+Project.Main.startTime+" ###");
 //        this.file.flush();
     }
 
@@ -41,34 +45,25 @@ public class Reporter {
 
 
     //T: add row to main report
-    public void addRowToReport(String type, String SessionID, String testName, String deviceSN, String status, String reportURL){
+    public void addRowToReport(String type, String testName, String deviceSN, String status,String testDuring,String SessionID, String reportURL , String exception){
         Date currentTime = new Date();
         String line;
         currentTime.getTime();
         line = currentTime+","+
                 type+","+
-                SessionID+","+
                 testName+","+
                 deviceSN+","+
                 status+","+
-                reportURL ;
+                testDuring+","+
+                SessionID+","+
+                reportURL+"/index.html"+","+
+                exception;
         System.out.println(line);
         file.println(line);
         file.flush();
     }
 
 
-    public static PrintWriter CreateReportFile (String Path, String FileName , String FileFormat){
-        //create New File
-        File report = new File(Path + "/" + FileName+"."+FileFormat);
-        FileWriter fw = null;
-        try {
-            fw = new FileWriter(report);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        PrintWriter pw = new PrintWriter(fw);
-        return pw;
-    }
+
 
 }

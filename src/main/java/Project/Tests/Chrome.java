@@ -1,22 +1,36 @@
+package Project.Tests;
+
+import Project.BaseTest;
 import org.junit.jupiter.api.*;
 
 @DisplayName("Chrome Test")
 public class Chrome extends BaseTest {
 
 
-    @BeforeAll
-    public static void setup1(){
-        System.err.println("Before all method - setup |||| Chrome");
-
-    }
-
-    @BeforeEach
-    public void before1() {
-        super.setup();
-        System.err.println("Before each method - before |||| Chrome");
-    }
-
     @Test
+    @DisplayName("Chrome YouTubeTest")
+    public void YouTubeTest() {
+        for (int i = 0; i < 10; i++) {
+            client.launch("chrome:https://www.youtube.com/watch?v=7CxeOJIICP0",true,false);
+        }
+        //client.click("web","xpath=//*[@nodeName='IMG' and (./preceding-sibling::* | ./following-sibling::*)[@text='Premieres in 89 minutes']]",0,1);
+
+    }
+
+//    @BeforeAll
+//    public static void setup1(){
+//        System.err.println("Before all method - setup |||| Chrome");
+//
+//    }
+
+//    @BeforeEach
+//    public void before1() {
+//        super.setup();
+//        System.err.println("Before each method - before |||| Chrome");
+//    }
+
+    //@Test
+    @DisplayName("Chrome EriBankNONInstrumentedTest1")
     public void newTest1() {
         System.err.println("***********************************test chrome");
         client.sleep(1000);
@@ -107,7 +121,7 @@ public class Chrome extends BaseTest {
         client.deviceAction("Landscape");
         client.deviceAction("Portrait");
 
-        //        client.startMonitor(Project.Main.EriBankPackageName+":battery");
+        //        client.startMonitor(Project.Project.Main.EriBankPackageName+":battery");
 
 
             String str5 = client.getMonitorsData();

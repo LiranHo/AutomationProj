@@ -1,8 +1,14 @@
+package Project;
+
+import Project.LongRun.LongRunTestWithoutReleaseOriginal;
+import Project.Tests.Chrome;
+import Project.LongRun.LongRunTest;
+import Project.Tests.Other_Tests.Capture;
+import Project.Tests.chrometest1;
+import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.DiscoverySelector;
-import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import java.util.Arrays;
@@ -11,14 +17,19 @@ import java.util.List;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
 public enum TestsSuites {
-    OneTest_forTest(Chrome.class),
-//    OneTest_forTest(baseTest.class, Chrome.class),
-    LONGRUN(Chrome.class, chrometest1.class),
-    SHORTRUN(Chrome.class, chrometest1.class),
+    EriBankInstrumented("Project.Tests.EriBank_Tests.Instrumented_Eribank_Tests"),
+    WebTests("Project.Tests.WebTests"),
+    AllTest("Project.Tests"),
+    OneTimeTest(Project.Tests.Other_Tests.KLM_Passport.class),
+    LongRunTest_NoRelease(LongRunTestWithoutReleaseOriginal.class),
+    BaseTest_LongRun(Project.LongRun.BaseTest_LongRun.class),
+    NothingTest(Project.Tests.NothingTest.class), /*Check the code environment without actual test*/
+
+
+    //Examples
     Packgess("Package1", "Package1"),
     Packgess_Class(Arrays.asList("Package1","Package1"), Chrome.class, Chrome.class),
     ;
-
 
 
     List<DiscoverySelector> selectors;
