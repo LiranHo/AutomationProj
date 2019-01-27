@@ -29,12 +29,13 @@ public class Main {
 
 
     public static void main(String[] args) throws Exception {
+
         EnterInput=true;
         //TODO: Create GUI to enter properties
         //TODO: create a template for println with: deviceSN, time, and that is also written to file.
         //T: ***Init The Test***
         //T: 1. Choose the platform to run (if Grid is true choose the cloud user)
-        Grid = true;
+        Grid = false;
         cloudUser = CloudUsers.LiranCloud;
         //T: 2. Choose on what devices to run: (Can add devices SN or Name (without ADB:))
         //TODO: make sure devices can't be added twice
@@ -44,13 +45,13 @@ public class Main {
         Choosedevices.add("FFY5T18607006025");
 
         //T: 3. Choose the run length (Run by time or choose number of Rounds - Or choose the length time you want)
-        Runby_NumberOfRounds = false; /**/
+        Runby_NumberOfRounds = true; /**/
         NumberOfRoundsToRun = 1;
-        TimeToRun = 60 * 60 * 12; //Seconds * minutes * hours
+        TimeToRun = 60 * 60 * 8; //Seconds * minutes * hours
         //T: 4. choose classes or packages to run with
-        //testsSuites = TestsSuites.AllTest;
-        //testsSuites = TestsSuites.OneTimeTest;
-        testsSuites = TestsSuites.LongRunTest_NoRelease;
+//        testsSuites = TestsSuites.AllTest;
+        testsSuites = TestsSuites.OneTimeTest;
+//        testsSuites = TestsSuites.LongRunTest_NoRelease;
 
 
         //T: 5. choose some properties
@@ -102,14 +103,15 @@ public class Main {
         //T: 4: Create threads for each device and start to Run
         if (Main.devices.size() <= 0)
             throw new Exception("Devices list is 0");
-        ExecutorService executorService = Executors.newFixedThreadPool(Main.devices.size());
-        ArrayList<Future> futures = new ArrayList<>();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+//        ArrayList<Future> futures = new ArrayList<>();
 
         for (Device device : devices) {
             System.out.println("starting device - " + device.getSerialnumber());
             Runner r = new Runner(device);
             System.out.println("Runner is up for device - " + device.getSerialnumber());
-            futures.add(executorService.submit(r));
+//            futures.add(executorService.submit(r));
+            executorService.execute(r);
         }
 
         //T: Create CollectSupportData Thread
@@ -118,34 +120,46 @@ public class Main {
 
 
         System.err.println("Started All Threads");
-        int i = 0;
-        //Future is every thread that run, we wait for all the threads to ends their work with the command "future.get" and then terminate the program
-        for (Future f : futures) {
-            try {
-                f.get();
-                System.out.println(f + " Future # " + (i + 1) + " is ended | from " + futures.size() + " of futures");
-                i++;
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
+//        int i = 0;
+//        //Future is every thread that run, we wait for all the threads to ends their work with the command "future.get" and then terminate the program
+//        for (Future f : futures) {
+//            try {
+//                f.get();
+//                System.out.println(f + " Future # " + (i + 1) + " is ended | from " + futures.size() + " of futures");
+//                i++;
+//            } catch (ExecutionException e) {
+//                e.printStackTrace();
+//            }
+//        }
+
+        executorService.shutdown();
+        if(executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS)) {
+            System.out.println("Finished all threads");
+        } else {
+            System.out.println("Timeout reached before all threads finished");
         }
 
-        executorService.shutdownNow();
+//        executorService.shutdownNow();
 
-        Main.sout("Info!","executorService.shutdownNow()");
+//        Main.sout("Info!","executorService.shutdownNow()");
 //        System.err.println("executorService.shutdownNow()");
 
         if (collectSupportDataThread != null) {
             collectSupportDataThread.terminate();
 //        collectSupportDataThread.interrupt();
 
-            System.err.println("collectSupportDataThread.terminate()");
+            Main.sout("Info!","collectSupportDataThread.terminate()");
         }
 
         //stop the collectSupportData- beep
-       if(beep!=null)
-        beep.Terminate();
-
+        if(beep!=null) {
+            beep.Terminate();
+//            while(!beep.beeperHandle.isCancelled()) {
+//                Main.sout("Info!", "beep.Terminate() and is isCancelled()= " + beep.beeperHandle.isCancelled());
+//                beep.beeperHandle.cancel(true);
+//            }
+            Main.sout("Info!", "beep.Terminate()" );
+        }
 
         //Add tests info to the info file
         String countTestsInfo = "=========================" + delimiter +
@@ -212,13 +226,13 @@ public class Main {
     public static int countTests_pass = 0;
     private static CollectSupportDataThread collectSupportDataThread;
     private static  BeeperControl beep;
-    final public static int CollectEveryX_inMin=30;
+    final public static int CollectEveryX_inMin=40; //Optimal is 30 MIN
     public static boolean CollectSupportDataVar;
 
 
     //**Applications install paths**
-    public static String UiCatalogInstallOnComputerPath = "C:\\Users\\liran.hochman\\Downloads\\apk\\New experitest apps\\UICatalog.apk";
-    public static String EriBankInstallOnComputerPath = "C:\\Users\\liran.hochman\\Downloads\\apk\\eribank.apk";
+    public static String UiCatalogInstallOnComputerPath = "E:\\Files - Liran - 2\\Applications_apk\\UiCatalog\\UICatalog.apk";
+    public static String EriBankInstallOnComputerPath = "E:\\Files - Liran - 2\\Applications_apk\\EriBank\\eribank.apk";
     public static String EriBankLaunchName = "com.experitest.ExperiBank/.LoginActivity";
     public static String EriBankPackageName = "com.experitest.ExperiBank";
     public static String UiCatalogLaunchName = "com.experitest.uicatalog/.MainActivity";
@@ -393,4 +407,6 @@ public class Main {
 
     //Finals - aid variables
     public static final String delimiter = "\r\n";
+
+
 }

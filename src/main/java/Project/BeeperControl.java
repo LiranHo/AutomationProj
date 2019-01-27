@@ -9,39 +9,38 @@ import static java.util.concurrent.TimeUnit.*;
 //INFO: https://stackoverflow.com/questions/426758/running-a-java-thread-in-intervals
 
 public class BeeperControl {
-//    public static void main(String[] args) {
-//        BeeperControl b = new BeeperControl();
-//        b.WakeEveryHour();
-//
-//      //  b.cancel(true);
-//    //    scheduler.shutdown();
-//    }
 
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    public static void main(String[] args) {
+        BeeperControl b = new BeeperControl();
+        b.WakeEveryHour();
+
+      //  b.cancel(true);
+    //    scheduler.shutdown();
+    }
+
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     ScheduledFuture<?> beeperHandle=null ;
 
 
     public void WakeEveryHour() {
 
-        final Runnable beeper = new Runnable() {
-            public void run() {
-                Main.CollectSupportDataVar=true;
-                String errorOutput= "Beep is on!";
-                System.out.println(errorOutput);
-                Main.ErrorFile.addRowToReport("Beep",errorOutput);
+        final Runnable beeper = () -> {
+            Main.CollectSupportDataVar=true;
+            Main.sout("Info!","Beep is on!");
+//                String errorOutput= "Beep is on!";
+//                System.out.println(errorOutput);
+//                Main.ErrorFile.addRowToReport("Beep",errorOutput);
 
-           }
-        };
-        beeperHandle = scheduler.scheduleAtFixedRate(beeper, 10, Main.CollectEveryX_inMin, MINUTES);
+       };
+        scheduler.scheduleAtFixedRate(beeper, 10, Main.CollectEveryX_inMin, MINUTES);
+//        beeperHandle = scheduler.scheduleAtFixedRate(beeper, 10, Main.CollectEveryX_inMin, MINUTES);
                 //scheduler.scheduleAtFixedRate(beeper, 10, 10, SECONDS);
         //initial delay: the time the first beep is happen
         //period: the time between beeps
 
 
-        scheduler.schedule(new Runnable() {
-            public void run() { beeperHandle.cancel(true); }
-        }, Main.TimeToRun, SECONDS);
+//        scheduler.schedule(() -> { beeperHandle.cancel(true); }, Main.TimeToRun, SECONDS);
         //}, 60 * 60, SECONDS);
 
         //delay:how much time the beeps happend
@@ -50,8 +49,9 @@ public class BeeperControl {
     }
 
     public void Terminate(){
-        if(beeperHandle !=null)
-            beeperHandle.cancel(true);
+        scheduler.shutdownNow();
+//        if(beeperHandle !=null)
+//            beeperHandle.cancel(true);
     }
 
 

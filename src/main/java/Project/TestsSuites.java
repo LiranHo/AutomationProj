@@ -20,7 +20,7 @@ public enum TestsSuites {
     EriBankInstrumented("Project.Tests.EriBank_Tests.Instrumented_Eribank_Tests"),
     WebTests("Project.Tests.WebTests"),
     AllTest("Project.Tests"),
-    OneTimeTest(Project.Tests.Other_Tests.KLM_Passport.class),
+    OneTimeTest(Project.Tests.WebTests.Webtest_test2_WebLaunches.class),
     LongRunTest_NoRelease(LongRunTestWithoutReleaseOriginal.class),
     BaseTest_LongRun(Project.LongRun.BaseTest_LongRun.class),
     NothingTest(Project.Tests.NothingTest.class), /*Check the code environment without actual test*/

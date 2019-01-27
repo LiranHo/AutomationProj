@@ -7,14 +7,13 @@ import org.junit.jupiter.api.*;
 public class Chrome extends BaseTest {
 
 
-    @Test
+   // @Test
     @DisplayName("Chrome YouTubeTest")
     public void YouTubeTest() {
         for (int i = 0; i < 10; i++) {
             client.launch("chrome:https://www.youtube.com/watch?v=7CxeOJIICP0",true,false);
         }
         //client.click("web","xpath=//*[@nodeName='IMG' and (./preceding-sibling::* | ./following-sibling::*)[@text='Premieres in 89 minutes']]",0,1);
-
     }
 
 //    @BeforeAll
@@ -37,7 +36,7 @@ public class Chrome extends BaseTest {
         EriBankNONInstrumentedTest1();
 
     }
-        @AfterEach
+     //   @AfterEach
         public void tearDown1() {
             System.err.println("Before each method - before |||| Chrome");
         }

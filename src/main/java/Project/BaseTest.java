@@ -40,7 +40,7 @@ public class BaseTest {
 
     @BeforeAll
     public void setup() {
-        System.out.println("### MyInfo: *** Class: 'BaseTest', | Method: 'setup' | which is: 'BeforeAll' *** ###");
+        Main.sout("### MyInfo: ***","Class: 'BaseTest', | Method: 'setup' | which is: 'BeforeAll' *** ###");
         reportURL = "GetReportURL";
         startTimePerDevice = System.currentTimeMillis();
         String DeviceSN = Thread.currentThread().getName();
@@ -57,16 +57,16 @@ public class BaseTest {
 
     @BeforeEach
     public void before() {
-        System.out.println("### MyInfo: *** Class: 'BaseTest', | Method: 'before' | which is: 'BeforeEach' *** ###");
+        Main.sout("### MyInfo: ***","Class: 'BaseTest', | Method: 'before' | which is: 'BeforeEach' *** ###");
 
-        System.out.println(new Date() + "\t" + device.getSerialnumber() + "\tBaseTest BeforeEach - device " + device.getSerialnumber());
+        Main.sout("Info",new Date() + "\t" + device.getSerialnumber() + "\tBaseTest BeforeEach - device " + device.getSerialnumber());
 
         testStartTime = new SimpleDateFormat("dd.MM.yyyy - HH.mm.ss").format(new java.util.Date());
         testStartTime_calculate = System.currentTimeMillis();
 
         createClient();
 
-        client.setProjectBaseDirectory(Main.Repository_project);
+      //  client.setProjectBaseDirectory(Main.Repository_project);
         path = client.setReporter("xml", FolderinnerDeviceDirPath, getTestName()); //set Project.report, called at the beginning of each test and define the Project.report parameters
 
         try{
@@ -82,6 +82,7 @@ public class BaseTest {
     //  @Test
     @DisplayName("BaseTest Test")
     public void Test() {
+
 
         System.err.println(new Date() + "\t" + device.getSerialnumber() + "\tBaseTest Test 1 ");
 
@@ -100,8 +101,7 @@ public class BaseTest {
 
     @AfterEach
     public void tearDown() {
-        System.out.println("### MyInfo: *** Class: 'BaseTest', | Method: 'tearDown' | which is: 'AfterEach' *** ###");
-
+        Main.sout("### MyInfo: *** ","Class: 'BaseTest', | Method: 'tearDown' | which is: 'AfterEach' *** ###");
         Main.sout("Info", device.getSerialnumber() + "\tBaseTest AfterEach (tear down)");
         try {
             if (client == null) {
@@ -112,10 +112,19 @@ public class BaseTest {
             //create collect support data every X time
             CollectSupportDataFromBeep(this.getClass().getName());
             client.releaseClient();
-            testEndTime = new SimpleDateFormat("dd.MM.yyyy - HH.mm.ss").format(new java.util.Date());
         }catch (Exception e){
             Main.sout("Exception","tearDown Failed \t"+e.getMessage());
+
+            /** try it out **/
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            String exceptionAsString = sw.toString();
+            Main.sout("Exception","BaseTest TearDown printStackTrace: "+"\t"+exceptionAsString);
+            /*****/
+
         }
+        testEndTime = new SimpleDateFormat("dd.MM.yyyy - HH.mm.ss").format(new java.util.Date());
+
     }
 
     protected void CollectSupportDataFromBeep(String theClassThatActivateMe) {
@@ -170,16 +179,9 @@ public class BaseTest {
 //                gridClient = new GridClient(Main.cloudUser.userName, Main.cloudUser.Password, Main.cloudUser.projectName, Main.cloudUser.grid_domain, Main.cloudUser.grid_port, Main.cloudUser.isSecured);
             System.out.println("Trying to get - " + "@serialnumber='" + device.getSerialnumber());
 
-            client = gridClient.lockDeviceForExecution(testName, "@serialnumber='" + device.getSerialnumber() + "'", 30, 50000);
+            client = gridClient.lockDeviceForExecution(testName, "@serialnumber='" + device.getSerialnumber() + "'", 480, 50000);
             System.out.println("Got - @serialnumber='" + device.getSerialnumber());
 
-            //            try {
-//            }catch (Exception e){
-//                if(e.getMessage().contains("timeout")){
-//                    client.releaseDevice(device.getSerialnumber(), true, false, true );
-//                    client = Main.gridClient.lockDeviceForExecution(testName, "@serialnumber='" + device.getSerialnumber() + "'", 30, 50000);
-//                }
-//            }
         }
 
 
@@ -188,7 +190,6 @@ public class BaseTest {
         sessionID = client.getSessionID();
 
     }
-
 
     public void handleMobileLisener(String Findtype, String findXpath , String Presstype , String PressXpath) {
         client.addMobileListener(Findtype, findXpath

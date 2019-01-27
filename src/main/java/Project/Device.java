@@ -62,7 +62,9 @@ public class Device extends Thread{
         return this.serialnumber;
     }
     public String getVersion(){ return this.version;}
+    public String getCategory(){ return this.category;}
     public Boolean IsDeviceRemote(){ return Boolean.valueOf(this.remote);}
+
 
 
 

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 public class chrometest1 extends BaseTest{
 
 
-    @Test
+  //  @Test
     @DisplayName("chrometest1 Test1")
     public void newTest(){
         System.err.println("***********************************test chrome1");

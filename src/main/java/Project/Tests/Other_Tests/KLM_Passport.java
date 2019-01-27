@@ -1,12 +1,14 @@
 package Project.Tests.Other_Tests;
 
 import Project.BaseTest;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 //SA-25098
 public class KLM_Passport extends BaseTest{
 
+    @Ignore
     @DisplayName("KLM_Passport_test")
     @Test
     public void testKLMpassport(){

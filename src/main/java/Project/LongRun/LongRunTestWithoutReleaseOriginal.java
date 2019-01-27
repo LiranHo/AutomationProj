@@ -144,6 +144,8 @@ public class LongRunTestWithoutReleaseOriginal extends BaseTest{
         protected String generateReport(){
             System.out.println("Start GenerateReport");
             String thisreportpath="";
+            if(client==null)
+                Main.sout("Warning","generateReport - client is null "+ device.getSerialnumber());
             try{
                 thisreportpath= client.generateReport(false);
             }catch (Exception e1){

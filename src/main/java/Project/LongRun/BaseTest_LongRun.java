@@ -64,7 +64,7 @@ public class BaseTest_LongRun {
 
             try {
                 gridClient = new GridClient(Main.cloudUser.userName, Main.cloudUser.Password, Main.cloudUser.projectName, Main.cloudUser.grid_domain, Main.cloudUser.grid_port, Main.cloudUser.isSecured);
-                client = gridClient.lockDeviceForExecution(testName, "@serialnumber='" + device.getSerialnumber() + "'", 10, 300000); //5 minutes
+                client = gridClient.lockDeviceForExecution(testName, "@serialnumber='" + device.getSerialnumber() + "'", 480, 300000); //5 minutes
             }catch (Exception e){
                 throw e;
             }
@@ -74,7 +74,7 @@ public class BaseTest_LongRun {
         System.out.println("Client SessionID: " + client.getSessionID());
         sessionID = client.getSessionID();
 
-        client.setProjectBaseDirectory(Main.Repository_project);
+       // client.setProjectBaseDirectory(Main.Repository_project);
 
     }
 

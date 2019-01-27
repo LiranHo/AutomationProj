@@ -1,10 +1,53 @@
 package Project.Tests.WebTests;
 
+import Project.Main;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class Webtest_test2_WebLaunches extends WebTests_BaseTest {
+
     @Test
+    @DisplayName("ManyLaunchesForDataSaver")
+    public void ManyLaunchesForDataSaver() throws Exception {
+        for (int i = 0; i < 100; i++) {
+            if(i%11==0){
+                client.applicationClose("com.android.chrome");
+            }
+            client.launch("chrome:ebay.com",true,false);
+            if(client.isElementFound("native","xpath=//*[@text='Save data and browse faster']",0)){
+                Main.sout("Info","popUpIsUp");
+                throw new Exception("popUpIsUp - ManyLaunchesForDataSaver");
+            }
+        }
+//        xpath=//*[@text='NO THANKS']
+//        xpath=//*[@text='TURN ON DATA SAVER']
+//        xpath=//*[@text='Save data and browse faster']
+    }
+
+  //  @Test
+    @DisplayName("Multi Launches with tabs")
+    public void Multi_Launches_with_tabs(){
+        if(!device.getCategory().toLowerCase().equals("tablet")){ //The tabs in chrome for Tablets not closing as expected
+            client.launch("chrome:www.ebay.com",true,false);
+            client.applicationClose("com.android.chrome");
+            client.launch("chrome:www.amazon.com",true,false);
+            client.run("adb shell am start -n com.android.chrome/org.chromium.chrome.browser.ChromeTabbedActivity -d \"www.mako.co.il\" --activity-clear-task ");
+            client.applicationClose("com.android.chrome");
+            client.launch("chrome:www.ynet.co.il",true,false);
+
+            //close the tabs
+            client.click("native","xpath=//*[@id='tab_switcher_button']",0,1);
+            client.click("native","xpath=//*[@id='menu_button']",0,1);
+            client.click("native","xpath=//*[@text='Close all tabs']",0,1);
+
+            client.applicationClose("com.android.chrome");
+            client.launch("chrome:www.bookdepository.com",true,false);
+            client.applicationClose("com.android.chrome");
+        }
+
+    }
+
+   // @Test
     @DisplayName("Webtest_test2 - WebLaunches")
     public void Test() {
         functionPrintInfo(getClass().toString(), "Test", "Test");

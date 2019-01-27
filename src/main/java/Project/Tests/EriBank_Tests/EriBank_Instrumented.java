@@ -53,7 +53,11 @@ public class EriBank_Instrumented extends BaseTest{
             client.launch(Main.EriBankLaunchName, instrumentedProperties, true);
         }
 
-
+        //AfterLaunch CheckForPopUp
+        if(client.isElementFound("native","xpath=//*[@text='OK']")){
+            Main.sout("Info","click on ok in eriBank instrumented class");
+            client.click("native","xpath=//*[@text='OK']",0,1);
+        }
 
 
 

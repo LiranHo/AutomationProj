@@ -18,7 +18,7 @@ public class DeviceActions_Test extends BaseTest{
 
         for(int i=0; i<10; i++) {
             System.out.println("function flip count: i="+i);
-            client.launch("com.android.chrome/com.google.android.apps.chrome.Main", false, false);
+          //  client.launch("com.android.chrome/com.google.android.apps.chrome.Main", false, false);
             client.launch("chrome:http://www.ebay.com", false, false);
             client.deviceAction("Landscape");
             client.deviceAction("Unlock");
