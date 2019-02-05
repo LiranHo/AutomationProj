@@ -191,6 +191,18 @@ public class BaseTest {
 
     }
 
+
+    //for chrome failed because of "save data" popup SA-27727
+    public void launchChromeMechanizem(String launchValues, Boolean instument, boolean stopIfRunning){
+        if(client.isElementFound("native","xpath=//*[@text='NO THANKS']",0)){
+            client.click("native","xpath=//*[@text='NO THANKS']",0,1);
+            Main.sout("Info","Click on NO THANKS for Save data and browse faster popup");
+        }
+        client.launch(launchValues,instument,stopIfRunning);
+        Main.sout("Info","Launching: "+launchValues+ " instument: "+instument);
+
+    }
+
     public void handleMobileLisener(String Findtype, String findXpath , String Presstype , String PressXpath) {
         client.addMobileListener(Findtype, findXpath
                 , new MobileListener() {

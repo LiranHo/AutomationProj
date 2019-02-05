@@ -87,7 +87,7 @@ public class LongRunTest extends BaseTest {
                         client.setLocation("0", "0");
                         break;
                     case 10:
-                        client.launch("chrome:m.ebay.com", true, false);
+                        launchChromeMechanizem("chrome:m.ebay.com", true, false);
                         break;
                     //      case 11: client.reboot(200000);  client.deviceAction("unlock"); break;
                 }
@@ -359,7 +359,7 @@ public class LongRunTest extends BaseTest {
         client.capture("Capture");
 
 
-        client.install("com.example.app/.MainActivity", true, false);
+        client.install("E:\\Files - Liran - 2\\Applications_apk\\Simple app for web browser\\com.example.app.MainActivity.2.apk", true, false);
         client.launch("com.example.app/.MainActivity", true, true);
         client.sleep(1000);
         if(        client.isElementFound("native", "xpath=//*[@nodeName='I' and ./parent::*[@nodeName='A' and ./parent::*[@text='        ']]]", 0)){

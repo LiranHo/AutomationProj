@@ -2,6 +2,8 @@ group 'com.experitest'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
+apply plugin: 'maven'
+
 
 sourceCompatibility = 1.8
 
@@ -10,6 +12,15 @@ repositories {
             maven{
                 url "${STrepository}"
             }
+    //maven { url "https://cloud.experitest.com/repo" }
+    maven {
+        url "http://192.168.1.213:8081/artifactory/libs-release"
+    }
+    maven {
+        url "http://192.168.1.213:8081/artifactory/libs-snapshot"
+    }
+    maven { url "http://repo.maven.apache.org/maven2" }
+    mavenCentral()
 
 }
 
@@ -19,5 +30,11 @@ dependencies {
 
 
     compile 'org.junit.jupiter:junit-jupiter-api:5.2.0'
-    compile 'com.experitest:seetest-client:12.0-SNAPSHOT'
+//    compile 'com.experitest:seetest-client:12.2-SNAPSHOT'
+    compile(group: 'com.experitest', name: 'clients', version: '12.3-SNAPSHOT', ext: 'zip')
+    compile(group: 'com.experitest', name: 'seetest-client', version: '12.3-SNAPSHOT')
+    compile 'io.github.glytching:junit-extensions:2.3.0'
+
+    compile group: 'io.appium', name: 'java-client', version: '6.1.0'
+    //compile group: 'com.experitest', name: 'appium-seetest-extension', version: '+'
 }

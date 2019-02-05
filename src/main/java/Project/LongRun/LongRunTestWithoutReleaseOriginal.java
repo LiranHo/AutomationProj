@@ -400,7 +400,7 @@ public class LongRunTestWithoutReleaseOriginal extends BaseTest{
             client.capture("Capture");
 
 
-            client.install("com.example.app/.MainActivity", true, false);
+            client.install("E:\\Files - Liran - 2\\Applications_apk\\Simple app for web browser\\com.example.app.MainActivity.2.apk", true, false);
             client.launch("com.example.app/.MainActivity", true, true);
             client.sleep(1000);
             if(        client.isElementFound("native", "xpath=//*[@nodeName='I' and ./parent::*[@nodeName='A' and ./parent::*[@text='        ']]]", 0)){

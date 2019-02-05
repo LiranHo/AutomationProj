@@ -10,7 +10,7 @@ public class KLM_Passport extends BaseTest{
 
     @Ignore
     @DisplayName("KLM_Passport_test")
-    @Test
+    //@Test
     public void testKLMpassport(){
         functionPrintInfo(getClass().toString(),"Test","Test");
         System.out.println("The application up is: "+client.getCurrentApplicationName());

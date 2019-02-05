@@ -13,7 +13,8 @@ public class Webtest_test2_WebLaunches extends WebTests_BaseTest {
             if(i%11==0){
                 client.applicationClose("com.android.chrome");
             }
-            client.launch("chrome:ebay.com",true,false);
+            launchChromeMechanizem("chrome:ebay.com",true,false);
+           // client.launch("chrome:ebay.com",true,false);
             if(client.isElementFound("native","xpath=//*[@text='Save data and browse faster']",0)){
                 Main.sout("Info","popUpIsUp");
                 throw new Exception("popUpIsUp - ManyLaunchesForDataSaver");
@@ -28,12 +29,12 @@ public class Webtest_test2_WebLaunches extends WebTests_BaseTest {
     @DisplayName("Multi Launches with tabs")
     public void Multi_Launches_with_tabs(){
         if(!device.getCategory().toLowerCase().equals("tablet")){ //The tabs in chrome for Tablets not closing as expected
-            client.launch("chrome:www.ebay.com",true,false);
+            launchChromeMechanizem("chrome:www.ebay.com",true,false);
             client.applicationClose("com.android.chrome");
-            client.launch("chrome:www.amazon.com",true,false);
+            launchChromeMechanizem("chrome:www.amazon.com",true,false);
             client.run("adb shell am start -n com.android.chrome/org.chromium.chrome.browser.ChromeTabbedActivity -d \"www.mako.co.il\" --activity-clear-task ");
             client.applicationClose("com.android.chrome");
-            client.launch("chrome:www.ynet.co.il",true,false);
+            launchChromeMechanizem("chrome:www.ynet.co.il",true,false);
 
             //close the tabs
             client.click("native","xpath=//*[@id='tab_switcher_button']",0,1);
@@ -41,7 +42,7 @@ public class Webtest_test2_WebLaunches extends WebTests_BaseTest {
             client.click("native","xpath=//*[@text='Close all tabs']",0,1);
 
             client.applicationClose("com.android.chrome");
-            client.launch("chrome:www.bookdepository.com",true,false);
+            launchChromeMechanizem("chrome:www.bookdepository.com",true,false);
             client.applicationClose("com.android.chrome");
         }
 
@@ -54,7 +55,7 @@ public class Webtest_test2_WebLaunches extends WebTests_BaseTest {
         System.out.println("The application up is: " + client.getCurrentApplicationName());
         /*~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         try {
-            client.launch("chrome:www.google.com", true, false);
+            launchChromeMechanizem("chrome:www.google.com", true, false);
             if(client.isElementFound("native","xpath=//*[@text='NO THANKS']",0))
                 client.click("NATIVE", "xpath=//*[@text='NO THANKS']", 0, 1);
             client.elementSendText("WEB", "xpath=//*[@name='q']", 0, "lmgtfy");
@@ -65,14 +66,14 @@ public class Webtest_test2_WebLaunches extends WebTests_BaseTest {
             System.out.println("launch chrome:www.google.com failed");
         }
         /*=====*/
-        client.launch("chrome:www.imdb.com", true, false);
+        launchChromeMechanizem("chrome:www.imdb.com", true, false);
         if(client.isElementFound("native","xpath=//*[@text='NO THANKS']",0))
             client.click("NATIVE", "xpath=//*[@text='NO THANKS']", 0, 1);
      //   client.click("WEB", "xpath=(//*/*[@nodeName='IMG'])[2]", 0, 1);
         client.capture();
         /*=====*/
         try {
-            client.launch("chrome:www.bookdepository.com", true, false);
+            launchChromeMechanizem("chrome:www.bookdepository.com", true, false);
             if(client.isElementFound("native","xpath=//*[@text='NO THANKS']",0))
                 client.click("NATIVE", "xpath=//*[@text='NO THANKS']", 0, 1);
             client.click("WEB", "xpath=(//*/*/*/*/*[@nodeName='IMG' and @width>0 and ./parent::*[@text and @nodeName='A' and ./parent::*[(./preceding-sibling::* | ./following-sibling::*)[./*[./*[./*[@nodeName='DIV']]]]]] and (./preceding-sibling::* | ./following-sibling::*)[@text]])[1]", 0, 1);
@@ -83,7 +84,7 @@ public class Webtest_test2_WebLaunches extends WebTests_BaseTest {
         }
             /*=====*/
             try {
-                client.launch("chrome:wikipedia.org/wiki/jerusalem", true, false);
+                launchChromeMechanizem("chrome:wikipedia.org/wiki/jerusalem", true, false);
                 if(client.isElementFound("native","xpath=//*[@text='NO THANKS']",0))
                     client.click("native","xpath=//*[@text='NO THANKS']",0,1);
                 client.swipe("down", 0, 3000);

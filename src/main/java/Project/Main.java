@@ -35,22 +35,22 @@ public class Main {
         //TODO: create a template for println with: deviceSN, time, and that is also written to file.
         //T: ***Init The Test***
         //T: 1. Choose the platform to run (if Grid is true choose the cloud user)
-        Grid = false;
+        Grid = true;
         cloudUser = CloudUsers.LiranCloud;
         //T: 2. Choose on what devices to run: (Can add devices SN or Name (without ADB:))
         //TODO: make sure devices can't be added twice
         //TODO: fix that adb: or ios: also work
         //TODO: add option to run on random X devices
         chooseSpesificDevices = false; //**/Choosedevices.add("cvh7n15b04005855");/*Choosedevices.add("ce051715b20f972a02"); Choosedevices.add("668bbfe5");Choosedevices.add("adb:HUAWEI BKL-L09")*/
-        Choosedevices.add("FFY5T18607006025");
+        Choosedevices.add("13edf0e");
 
         //T: 3. Choose the run length (Run by time or choose number of Rounds - Or choose the length time you want)
-        Runby_NumberOfRounds = true; /**/
-        NumberOfRoundsToRun = 1;
+        Runby_NumberOfRounds = false; /**/
+        NumberOfRoundsToRun = 5;
         TimeToRun = 60 * 60 * 8; //Seconds * minutes * hours
         //T: 4. choose classes or packages to run with
-//        testsSuites = TestsSuites.AllTest;
-        testsSuites = TestsSuites.OneTimeTest;
+        testsSuites = TestsSuites.AllTest;
+//        testsSuites = TestsSuites.OneTimeTest;
 //        testsSuites = TestsSuites.LongRunTest_NoRelease;
 
 
@@ -59,12 +59,10 @@ public class Main {
 
         //NOTE: EnterInput
         if(EnterInput)
-            getInputFromUser();
+                getInputFromUser();
 
-        //NOTE:***********
-        //***************************************************************************//
-        //***************************************************************************//
-        //***************************************************************************//
+        System.err.println("###STARTING...###");
+
 
         //T: ***Start To Prepare The Test***
         startTime = new SimpleDateFormat("dd.MM.yyyy - HH.mm.ss").format(new java.util.Date());
@@ -76,7 +74,6 @@ public class Main {
         // INIT info file
         infoFile = new Files("Init Info", innerDirectoryPath);
         ErrorFile = new Files("Error File", innerDirectoryPath);
-
 
 
         //T: get devices list and create Hashmap
@@ -173,18 +170,120 @@ public class Main {
 
     private static void getInputFromUser() {
         //TODO: this function
-//        Scanner scan = new Scanner(System.in);
-//        System.out.println();
-//        Grid
-//        cloudUser
-//        chooseSpesificDevices
-//        Choosedevices.add("FFY5T18607006025");
-//        Runby_NumberOfRounds = false; /**/
-//        NumberOfRoundsToRun = 1;
-//        TimeToRun = 60 * 60 * 5; //Seconds * minutes * hours
-//        //T: 4. choose classes or packages to run with
-//        testsSuites = TestsSuites.AllTest;
-//
+
+        Scanner scan = new Scanner(System.in);
+
+        printCurrentTunProperties();
+
+        System.err.println("If You Want To Change Press On The Relevant Number");
+
+        String input = scan.nextLine();
+
+        //T: Change the properties for this run
+        while(!input.equals("")) { //If entering just "Enter" the program will start
+            switch (input) {
+                case "1": //Grid
+                    System.out.println("Enter Value: true/false");
+                    String getInput = scan.nextLine();
+                    Grid=Boolean.valueOf(getInput);
+
+                    System.out.println("Grid value is changed to: "+Grid);
+                    break;
+                case "2": //Cloud User
+                    System.out.println("Enter Value: LiranCloud / LiranQaCloud");
+                    getInput = scan.nextLine();
+                    cloudUser=CloudUsers.valueOf(getInput);
+                    System.out.println("cloudUser value is changed to: "+cloudUser.toString(true));
+                    break;
+                case "3": //chooseSpesificDevices
+                    System.out.println("Enter Value: true/false");
+                    getInput = scan.nextLine();
+                    chooseSpesificDevices=Boolean.valueOf(getInput);
+                    System.out.println("chooseSpesificDevices value is changed to: "+chooseSpesificDevices);
+                    String Device="";
+                    if(chooseSpesificDevices) {
+                        while (!Device.equals("-1")) {
+                            System.out.println("Enter Devices Serial Number, To quit enter -1");
+                            Device = scan.nextLine();
+                            if(!Device.equals("-1")) {
+                                Choosedevices.add(Device);
+                                System.out.println("Device " + Device + " Enter To the Running devices");
+                            }else System.out.println("Devices Add Is Ended");
+                        }
+                    }
+                    break;
+                case "4": //Runby_NumberOfRounds
+                    System.out.println("Enter Value: true/false");
+                    getInput = scan.nextLine();
+                    Runby_NumberOfRounds=Boolean.valueOf(getInput);
+                    System.out.println("Runby_NumberOfRounds value is changed to: "+Runby_NumberOfRounds);
+                    break;
+
+                case "5": //NumberOfRoundsToRun OR TimeToRun
+                    if(Runby_NumberOfRounds){
+                        System.out.println("Enter Value for NumberOfRoundsToRun: Integer");
+
+                        getInput = scan.nextLine();
+                        NumberOfRoundsToRun=Integer.valueOf(getInput);
+                        System.out.println("NumberOfRoundsToRun value is changed to: "+NumberOfRoundsToRun);
+                    }else{
+                        System.out.println("Enter Value for TimeToRun: time in milliseconds");
+                        getInput = scan.nextLine();
+                        TimeToRun=Integer.valueOf(getInput);
+                        System.out.println("TimeToRun value is changed to: "+TimeToRun);
+                    }
+
+                    break;
+                case "6": //testsSuites
+                    System.out.println("Enter Value: AllTest / OneTimeTest");
+                    getInput = scan.nextLine();
+                    testsSuites=TestsSuites.valueOf(getInput);
+                    System.out.println("testsSuites value is changed to: "+testsSuites.toString());
+                    break;
+
+                case "0": //testsSuites
+                    printCurrentTunProperties();
+                    break;
+
+            }
+            System.err.println("If You Want To Change Press On The Relevant Number");
+            input = scan.nextLine();
+        }
+
+        printCurrentTunProperties();
+
+    }
+
+    public static void printCurrentTunProperties(){
+        System.err.println("********************");
+        System.out.println("********************");
+        System.out.println("**Run Properties**");
+        System.out.println("0. Print the Setting");
+        System.out.println("1. Grid: "+Grid);
+        System.out.println("2. Cloud User: "+cloudUser.toString(true));
+        System.out.println("3. chooseSpesificDevices: "+chooseSpesificDevices);
+        if(chooseSpesificDevices)
+
+        {
+            for (String DeviceSN : Choosedevices) {
+                System.out.println("    " + DeviceSN);
+            }
+
+        }
+        System.out.println("4. Runby_NumberOfRounds: "+Runby_NumberOfRounds);
+        if(Runby_NumberOfRounds)
+
+        {
+            System.out.println("5. NumberOfRoundsToRun: " + NumberOfRoundsToRun);
+        }
+        else
+
+        {
+            System.out.println("5. TimeToRun: " + TimeToRun);
+        }
+        System.out.println("6. testsSuites: "+testsSuites.toString());
+        System.out.println("********************");
+        System.out.println("********************");
     }
 
 
@@ -228,14 +327,19 @@ public class Main {
     private static  BeeperControl beep;
     final public static int CollectEveryX_inMin=40; //Optimal is 30 MIN
     public static boolean CollectSupportDataVar;
+    public static String PrintDevicesInfo;
+    public static String PrintDeviceSN;
 
 
     //**Applications install paths**
-    public static String UiCatalogInstallOnComputerPath = "E:\\Files - Liran - 2\\Applications_apk\\UiCatalog\\UICatalog.apk";
     public static String EriBankInstallOnComputerPath = "E:\\Files - Liran - 2\\Applications_apk\\EriBank\\eribank.apk";
     public static String EriBankLaunchName = "com.experitest.ExperiBank/.LoginActivity";
     public static String EriBankPackageName = "com.experitest.ExperiBank";
+
+    public static String UiCatalogInstallOnComputerPath = "E:\\Files - Liran - 2\\Applications_apk\\UiCatalog\\UICatalog.apk";
     public static String UiCatalogLaunchName = "com.experitest.uicatalog/.MainActivity";
+    public static String UiCatalogPackageName = "com.experitest.uicatalog";
+
     public static String EriBankLaunchName_old = "com.experitest.eribank/com.experitest.ExperiBank.LoginActivity";
     public static String EriBankPackageName_old = "com.experitest.eribank";
 
@@ -268,8 +372,8 @@ public class Main {
         //print the devices list
         System.out.println("Devices List info: " + delimiter);
         System.out.println("Number of Devices in this run: " + devices.size());
-        String PrintDevicesInfo = "";
-        String PrintDeviceSN = "";
+        PrintDevicesInfo = "";
+        PrintDeviceSN = "";
         for (int i = 0; i < devices.size(); i++) {
             PrintDevicesInfo += "#" + (i + 1) + " " + devices.get(i).toString() + delimiter + delimiter;
             PrintDeviceSN += devices.get(i).getSerialnumber() + delimiter;

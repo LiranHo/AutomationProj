@@ -20,6 +20,11 @@ public class Webtest_test4_GboardKeyboard extends WebTests_BaseTest {
             client.launch("http://www.amazon.com", false, true);
             client.sleep(1000);
             client.click("native", "xpath=//*[@id='url_bar']", 0, 1);
+            if(client.isElementFound("native","//*[@text='NO, THANKS']",0)){
+                client.click("native","//*[@text='NO, THANKS']",0,1);
+            }
+            client.sleep(1000);
+            client.elementSendText("native","//*[@id='url_bar']",0,"");
             clickKeyboard('e');
             clickKeyboard('b');
             clickKeyboard('a');
@@ -29,7 +34,8 @@ public class Webtest_test4_GboardKeyboard extends WebTests_BaseTest {
             clickKeyboard('o');
             clickKeyboard('m');
             client.click("native", "nixpath=//*[@contentDescription='Go']", 0, 1);
-            client.verifyElementFound("native", "nixpath=//*[@id='gh-mlogo']", 0);
+            client.verifyElementFound("native", "//*[@text='eBay Logo' or @text='eBay']", 0);
+//            client.verifyElementFound("native", "nixpath=//*[@id='gh-mlogo']", 0);
         }
 
     }

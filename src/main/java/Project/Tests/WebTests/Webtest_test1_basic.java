@@ -19,7 +19,7 @@ public class Webtest_test1_basic extends WebTests_BaseTest {
 
         final String tabElement = "//*[@class='srp-item__title' or @class='grVwBg' or @class='s-item' or @class='s-item__image']";
 
-        client.launch("chrome:m.ebay.com", true, true);
+        launchChromeMechanizem("chrome:m.ebay.com", true, true);
         client.hybridWaitForPageLoad(30000);
         client.waitForElement("WEB", searchBox, 0, 30000);
         client.elementSendText("WEB", searchBox, 0, "Hello");
@@ -49,7 +49,7 @@ public class Webtest_test1_basic extends WebTests_BaseTest {
         }
 
 
-        client.launch("chrome:ebay.com", true, false);
+        launchChromeMechanizem("chrome:ebay.com", true, false);
         client.elementSendText("WEB", "xpath=//*[@name='_nkw']", 0, "yellow");
 
         try {
