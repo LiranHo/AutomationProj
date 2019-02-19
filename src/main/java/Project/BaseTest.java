@@ -3,14 +3,13 @@ package Project;
 import com.experitest.client.Client;
 import com.experitest.client.GridClient;
 import com.experitest.client.MobileListener;
-import com.sun.org.glassfish.gmbal.Description;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import sun.security.x509.CRLReasonCodeExtension;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 @ExtendWith(RunnerExtension.class)
@@ -20,7 +19,7 @@ public class BaseTest {
 //    protected Project.Device devices = Devices.A0235;  //Enum
 
     protected String reportURL;
-    protected Device device;
+    protected Device device = new Device(Main.NEWDEVICE_ANDROID);
     protected String sessionID;
     protected String testName;
     protected long startTimePerDevice;
@@ -39,42 +38,54 @@ public class BaseTest {
 
 
     @BeforeAll
-    public void setup() {
-        Main.sout("### MyInfo: ***","Class: 'BaseTest', | Method: 'setup' | which is: 'BeforeAll' *** ###");
-        reportURL = "GetReportURL";
+    public void setup() throws NullPointerException {
+        //check if main is not initialized and if so init it
+        if (Thread.currentThread().getName().toLowerCase().equals("main")) {
+            Main.initTheMain();
+
+        }
+
+
+        Main.sout("### MyInfo: ***", "Class: 'BaseTest', | Method: 'setup' | which is: 'BeforeAll' *** ###");
+        reportURL = "ReportURL";
         startTimePerDevice = System.currentTimeMillis();
         String DeviceSN = Thread.currentThread().getName();
-        device = Main.searchDeviceBySN(DeviceSN);
+        if (Main.searchDeviceBySN(DeviceSN) != null) {
+            device = Main.searchDeviceBySN(DeviceSN);
+        }
         testName = device.getSerialnumber();
         System.out.println(new Date() + "\t" + device.getSerialnumber() + "\tBaseTest BeforeAll - device " + Thread.currentThread().getName());
         FolderinnerDeviceDirPath = device.getDeviceFolderPath();
         gridClient = new GridClient(Main.cloudUser.userName, Main.cloudUser.Password, Main.cloudUser.projectName, Main.cloudUser.grid_domain, Main.cloudUser.grid_port, Main.cloudUser.isSecured);
 
 
+    }
 
+    private void getDevice() {
+        client.waitForDevice("@os='android'", 60_000);
     }
 
 
     @BeforeEach
     public void before() {
-        Main.sout("### MyInfo: ***","Class: 'BaseTest', | Method: 'before' | which is: 'BeforeEach' *** ###");
+        Main.sout("### MyInfo: ***", "Class: 'BaseTest', | Method: 'before' | which is: 'BeforeEach' *** ###");
 
-        Main.sout("Info",new Date() + "\t" + device.getSerialnumber() + "\tBaseTest BeforeEach - device " + device.getSerialnumber());
+        Main.sout("Info", new Date() + "\t" + device.getSerialnumber() + "\tBaseTest BeforeEach - device " + device.getSerialnumber());
 
         testStartTime = new SimpleDateFormat("dd.MM.yyyy - HH.mm.ss").format(new java.util.Date());
         testStartTime_calculate = System.currentTimeMillis();
 
         createClient();
 
-      //  client.setProjectBaseDirectory(Main.Repository_project);
+        //  client.setProjectBaseDirectory(Main.Repository_project);
         path = client.setReporter("xml", FolderinnerDeviceDirPath, getTestName()); //set Project.report, called at the beginning of each test and define the Project.report parameters
 
-        try{
+        try {
             handleMobileLisener();
-        }catch (Exception e){
-            String errorOutput= new Date()+ "\t"+"handleMobileLisener fail "+ "\t"+ e.getMessage();
+        } catch (Exception e) {
+            String errorOutput = new Date() + "\t" + "handleMobileLisener fail " + "\t" + e.getMessage();
             System.out.println(errorOutput);
-            Main.ErrorFile.addRowToReport("Exception",errorOutput);
+            Main.ErrorFile.addRowToReport("Exception", errorOutput);
         }
     }
 
@@ -101,25 +112,25 @@ public class BaseTest {
 
     @AfterEach
     public void tearDown() {
-        Main.sout("### MyInfo: *** ","Class: 'BaseTest', | Method: 'tearDown' | which is: 'AfterEach' *** ###");
+        Main.sout("### MyInfo: *** ", "Class: 'BaseTest', | Method: 'tearDown' | which is: 'AfterEach' *** ###");
         Main.sout("Info", device.getSerialnumber() + "\tBaseTest AfterEach (tear down)");
         try {
             if (client == null) {
-                Main.sout("Warning","Tear Down - client is null do nothing "+device.getSerialnumber());
+                Main.sout("Warning", "Tear Down - client is null do nothing " + device.getSerialnumber());
                 return;
             }
-            client.generateReport(false);
+            reportURL = client.generateReport(false);
             //create collect support data every X time
             CollectSupportDataFromBeep(this.getClass().getName());
             client.releaseClient();
-        }catch (Exception e){
-            Main.sout("Exception","tearDown Failed \t"+e.getMessage());
+        } catch (Exception e) {
+            Main.sout("Exception", "tearDown Failed \t" + e.getMessage());
 
             /** try it out **/
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
             String exceptionAsString = sw.toString();
-            Main.sout("Exception","BaseTest TearDown printStackTrace: "+"\t"+exceptionAsString);
+            Main.sout("Exception", "BaseTest TearDown printStackTrace: " + "\t" + exceptionAsString);
             /*****/
 
         }
@@ -128,12 +139,11 @@ public class BaseTest {
     }
 
     protected void CollectSupportDataFromBeep(String theClassThatActivateMe) {
-        System.out.println("** BeeperControl check in class "+theClassThatActivateMe+" \t Main.CollectSupportDataVar = "+Main.CollectSupportDataVar);
-        if(Main.CollectSupportDataVar){
-            Main.CollectSupportDataVar=false;
-            String collectSupportDataPATH=Main.innerDirectoryPath + "\\SupportData" + new SimpleDateFormat("dd.MM.yyyy - HH.mm.ss").format(new java.util.Date())+".zip";
-            System.out.println("** Start to collectSupportData from beeperControl activation,"+Main.delimiter+"collectSupportData Path is: "+collectSupportDataPATH);
-            client.collectSupportData(collectSupportDataPATH , "", "", "", "", "", true, false);
+        System.out.println("** BeeperControl check in class " + theClassThatActivateMe + " \t Main.CollectSupportDataVar = " + Main.CollectSupportDataVar.get());
+        if(Main.CollectSupportDataVar.compareAndSet(true,false)){ //check if true and than change it to false
+            String collectSupportDataPATH = Main.innerDirectoryPath + "\\SupportData" + new SimpleDateFormat("dd.MM.yyyy - HH.mm.ss").format(new java.util.Date()) + ".zip";
+            System.out.println("** Start to collectSupportData from beeperControl activation," + Main.delimiter + "collectSupportData Path is: " + collectSupportDataPATH);
+            client.collectSupportData(collectSupportDataPATH, "", "", "", "", "", true, false);
         }
     }
 
@@ -148,7 +158,7 @@ public class BaseTest {
         return this.testName;
     }
 
-    public void handleMobileLisener(){
+    public void handleMobileLisener() {
         handleMobileLisener("native", "xpath=//*[@nodeName='DIV' and @width>0 and ./*[@text='การตั้งค่าภาษา'] and ./*[@nodeName='IMG']]", "native", "xpath=//*[@id='infobar_close_button']");
         handleMobileLisener("native", "xpath=//*[@text='No Thanks']", "native", "xpath=//*[@text='No Thanks']");
         handleMobileLisener("native", "xpath=//*[@id='infobar_close_button']", "native", "xpath=//*[@id='infobar_close_button']");
@@ -156,9 +166,9 @@ public class BaseTest {
         handleMobileLisener("native", "xpath=//*[@text='NO THANKS']", "native", "xpath=//*[@text='NO THANKS']");
         handleMobileLisener("native", "xpath=//*[@id='button_secondary']", "native", "xpath=//*[@id='button_secondary']");
         handleMobileLisener("native", "xpath=//*[@text='ALLOW']", "native", "xpath=//*[@text='ALLOW']");
-        handleMobileLisener("web","xpath=//*[@text='I agree']","web","xpath=//*[@text='I agree']");
-        handleMobileLisener("native","xpath=//*[@text='NO THANKS']","Native","xpath=//*[@text='NO THANKS']");
-        handleMobileLisener("native","xpath=//*[@text='OK']","Native","xpath=//*[@text='OK']");
+        handleMobileLisener("web", "xpath=//*[@text='I agree']", "web", "xpath=//*[@text='I agree']");
+        handleMobileLisener("native", "xpath=//*[@text='NO THANKS']", "Native", "xpath=//*[@text='NO THANKS']");
+        handleMobileLisener("native", "xpath=//*[@text='OK']", "Native", "xpath=//*[@text='OK']");
 
     }
 
@@ -171,7 +181,7 @@ public class BaseTest {
         //Use STA
         if (!Main.Grid) {
             client = new Client(host, port, true);
-            System.out.println("Waiting for device: "+device.getSerialnumber());
+            System.out.println("Waiting for device: " + device.getSerialnumber());
             client.waitForDevice("@serialnumber='" + device.getSerialnumber() + "'", 500000);
         }
         //Use Grid
@@ -193,17 +203,17 @@ public class BaseTest {
 
 
     //for chrome failed because of "save data" popup SA-27727
-    public void launchChromeMechanizem(String launchValues, Boolean instument, boolean stopIfRunning){
-        if(client.isElementFound("native","xpath=//*[@text='NO THANKS']",0)){
-            client.click("native","xpath=//*[@text='NO THANKS']",0,1);
-            Main.sout("Info","Click on NO THANKS for Save data and browse faster popup");
+    public void launchChromeMechanizem(String launchValues, Boolean instument, boolean stopIfRunning) {
+        if (client.isElementFound("native", "xpath=//*[@text='NO THANKS']", 0)) {
+            client.click("native", "xpath=//*[@text='NO THANKS']", 0, 1);
+            Main.sout("Info", "Click on NO THANKS for Save data and browse faster popup");
         }
-        client.launch(launchValues,instument,stopIfRunning);
-        Main.sout("Info","Launching: "+launchValues+ " instument: "+instument);
+        client.launch(launchValues, instument, stopIfRunning);
+        Main.sout("Info", "Launching: " + launchValues + " instument: " + instument);
 
     }
 
-    public void handleMobileLisener(String Findtype, String findXpath , String Presstype , String PressXpath) {
+    public void handleMobileLisener(String Findtype, String findXpath, String Presstype, String PressXpath) {
         client.addMobileListener(Findtype, findXpath
                 , new MobileListener() {
                     @Override
@@ -215,35 +225,34 @@ public class BaseTest {
     }
 
 
-
     protected boolean checkIfAppInstall(String appPackage, boolean instrumented) {
         System.out.println("### MyInfo: *** Class: 'BaseTest', | Method: 'checkIfAppInstall' | which is: 'function' *** ###");
 
         String apps = client.run("adb shell pm list packages");
-            if (apps.contains(appPackage)) {
-                if (instrumented) {
-                    if (apps.contains(appPackage + ".test")) {
-                        int app_userId = 0;
-                        int app_userId_test = -2;
-                        try {
-                            app_userId = Integer.valueOf(client.run("adb shell dumpsys package " + appPackage + " | grep userId").replaceAll("[^\\d.]", ""));
-                            app_userId_test = Integer.valueOf(client.run("adb shell dumpsys package " + appPackage + ".test | grep userId").replaceAll("[^\\d.]", ""));
-                        } catch (Exception e) {
-                            app_userId = -10;
-                            app_userId_test = -20;
-                        }
+        if (apps.contains(appPackage)) {
+            if (instrumented) {
+                if (apps.contains(appPackage + ".test")) {
+                    int app_userId = 0;
+                    int app_userId_test = -2;
+                    try {
+                        app_userId = Integer.valueOf(client.run("adb shell dumpsys package " + appPackage + " | grep userId").replaceAll("[^\\d.]", ""));
+                        app_userId_test = Integer.valueOf(client.run("adb shell dumpsys package " + appPackage + ".test | grep userId").replaceAll("[^\\d.]", ""));
+                    } catch (Exception e) {
+                        app_userId = -10;
+                        app_userId_test = -20;
+                    }
 
-                        if ((app_userId + 1 == app_userId_test) || (app_userId - 1 == app_userId_test)) {
-                            return true;
-                        } else
-                            return false;
+                    if ((app_userId + 1 == app_userId_test) || (app_userId - 1 == app_userId_test)) {
+                        return true;
                     } else
                         return false;
                 } else
-                    return true;
+                    return false;
             } else
-                return false;
-        }
+                return true;
+        } else
+            return false;
+    }
 
 
     //get battery stats file into file in the test folder
@@ -252,10 +261,9 @@ public class BaseTest {
 //        Process p = Runtime.getRuntime().exec("adb shell dumpsys batterystats > " + myPath);
 
 
-
         String devices = "";
 
-        String [] command = {"adb","-s",device.getSerialnumber(), "shell","dumpsys","batterystats"};
+        String[] command = {"adb", "-s", device.getSerialnumber(), "shell", "dumpsys", "batterystats"};
         ProcessBuilder builder = new ProcessBuilder(command);
         builder.redirectErrorStream();
         Process process = null;
@@ -268,23 +276,23 @@ public class BaseTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        try{
+        try {
             InputStream is = process.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             String line = null;
             boolean firstLine = true;
             while ((line = reader.readLine()) != null) {
                 System.out.println(line);
-                try{
+                try {
                     writer.write(line + "\n");
-                }catch(Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
             reader.close();
             is.close();
 //                Thread.sleep(10000);
-        }catch(Exception e) {
+        } catch (Exception e) {
             process.destroy();
         }
         writer.close();
@@ -294,15 +302,15 @@ public class BaseTest {
     }
 
 
-    public void functionPrintInfo(String my_Class, String my_method, String my_type){
-        System.out.println("### MyInfo: *** Class: '"+my_Class+"', | Method: '"+my_method+"' | which is: '"+my_type+"' *** ###");
+    public void functionPrintInfo(String my_Class, String my_method, String my_type) {
+        System.out.println("### MyInfo: *** Class: '" + my_Class + "', | Method: '" + my_method + "' | which is: '" + my_type + "' *** ###");
 
     }
 
-   }
 
 
 
+}
 
 
 /*
@@ -313,3 +321,8 @@ The method that is annotated with the @BeforeEach is invoked before each test me
 The method that is annotated with the @AfterEach annotation is invoked after each test method.
 The method that is annotated with the @AfterAll annotation must be static, and it is run once after all test methods have been run.
 * */
+
+
+
+
+

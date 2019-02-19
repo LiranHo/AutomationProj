@@ -26,7 +26,11 @@ public class RunnerExtension implements AfterEachCallback {
            String sessionID = baseTest.sessionID;
            String testName = context.getDisplayName();
            String deviceSN= baseTest.device.getSerialnumber();
-           String reportPath= baseTest.path;
+           //String reportPath= baseTest.path; //old path I used - doesn't work well with reporter
+            String reportPath = baseTest.reportURL;
+            if(!reportPath.contains("http") && !reportPath.contains("ReportURL")) {
+                reportPath = reportPath + "/index.html";
+            }
            long testDuring = System.currentTimeMillis() - baseTest.testStartTime_calculate;
 
            //System.out.println("The test result is: @@ "+testResult+" @@ | false - SUCCESS, true - FAILED"); //false - SUCCESS, true - FAILED

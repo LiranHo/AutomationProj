@@ -26,7 +26,7 @@ public class BeeperControl {
     public void WakeEveryHour() {
 
         final Runnable beeper = () -> {
-            Main.CollectSupportDataVar=true;
+            Main.CollectSupportDataVar.set(true);
             Main.sout("Info!","Beep is on!");
 //                String errorOutput= "Beep is on!";
 //                System.out.println(errorOutput);

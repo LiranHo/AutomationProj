@@ -6,6 +6,7 @@ import Project.Main;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import Project.Tests.EriBank_Tests.Instrumented_Eribank_Tests.EriBank_Insrumented_test1_Login;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,26 +18,13 @@ import java.util.Random;
 
 public class LongRunTestWithoutReleaseOriginal extends BaseTest{
         static boolean longRun=true;
-        static boolean adb_commands_parallel=true;
+        static boolean adb_commands_parallel=false;
 
 //        long startTime = System.currentTimeMillis();
         long endTime;
         long totalTime=0;
         int CountRounds=0;
 
-
-    public static void getInputFromUser(){
-            Scanner scan = new Scanner(System.in);
-            System.out.println("enter Some instructions");
-            String UserInput = scan.next();
-            int num = Integer.valueOf(UserInput);
-        }
-
-//        @BeforeAll
-//        public static void beforeAll(){
-//            //TODO: add thid function to the main so it will work only once
-////            getInputFromUser();
-//        }
 
         @DisplayName("LongRunTestWithoutReleaseOriginal")
         @Test
@@ -51,10 +39,9 @@ public class LongRunTestWithoutReleaseOriginal extends BaseTest{
 //            long endTime;
 //            long totalTime=0;
             if(Main.Runby_NumberOfRounds) {
-                System.out.println("Run by number of rounds: "+Main.NumberOfRoundsToRun);
+                Main.sout("Info","Run by number of rounds: "+Main.NumberOfRoundsToRun);
                 for (CountRounds = 0; CountRounds < Main.NumberOfRoundsToRun; CountRounds++) {
-                    System.out.println("Loop number: "+(CountRounds+1));
-
+                    Main.sout("Info","Loop number: "+(CountRounds+1));
                     //RUN
                     run();
                 }
@@ -66,13 +53,11 @@ public class LongRunTestWithoutReleaseOriginal extends BaseTest{
                         CountRounds++;
                         endTime = System.currentTimeMillis();
                         totalTime = (endTime - startTimePerDevice)/ 1000; //in miliseconds
-                        System.err.println("||"+device.getSerialnumber()+"|| "+"startTimePerDevice: "+startTimePerDevice+" end time: "+endTime+" total time: "+totalTime+" Main.timeToRun: "+Main.TimeToRun);
-                        System.out.println("Total Time is: "+totalTime);
-
+                Main.sout("Info","||"+device.getSerialnumber()+"|| "+"startTimePerDevice: "+startTimePerDevice+" end time: "+endTime+" total time: "+totalTime+" Main.timeToRun: "+Main.TimeToRun);
+                Main.sout("Info","Total Time is: "+totalTime);
                         //RUN
                         run();
                     }
-
         }
 
 
@@ -90,9 +75,8 @@ public class LongRunTestWithoutReleaseOriginal extends BaseTest{
             }
 
             //HOW Much Time passed
-            System.err.println("Time passes for device: " + device.getSerialnumber() + " : " + totalTime);
+            Main.sout("Info!","Time passes for device: " + device.getSerialnumber() + " : " + totalTime);
             Main.report.addRowToReport("LongRun6", testName, device.getSerialnumber(), "End Of Round #" + CountRounds, String.valueOf(totalTime), sessionID, path, "");
-
 
             //CollectSupportData
             CollectSupportDataFromBeep(this.getClass().getName());
@@ -158,6 +142,9 @@ public class LongRunTestWithoutReleaseOriginal extends BaseTest{
 
 
         protected void AllTest(){
+
+//            new Project.Tests.EriBank_Tests.Instrumented_Eribank_Tests.EriBank_Insrumented_test1_Login().Test();
+
             testName= "LONGRUN - AllTest";
 
             List<String> functions = new ArrayList<>();

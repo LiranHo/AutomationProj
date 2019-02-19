@@ -56,7 +56,7 @@ public class Reporter extends ReportBasics {
                 status+","+
                 testDuring+","+
                 SessionID+","+
-                reportURL+"/index.html"+","+
+                reportURL+","+
                 exception;
         System.out.println(line);
         file.println(line);

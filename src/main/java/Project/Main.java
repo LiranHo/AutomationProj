@@ -19,50 +19,49 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class Main {
+    final protected static String NEWDEVICE_ANDROID = "899X07061";
 
+    public static void initTheMain() {
 
-    public static void main(String[] args) throws Exception {
-
-        EnterInput=true;
+        EnterInput = true;
         //TODO: Create GUI to enter properties
         //TODO: create a template for println with: deviceSN, time, and that is also written to file.
+
         //T: ***Init The Test***
         //T: 1. Choose the platform to run (if Grid is true choose the cloud user)
         Grid = true;
         cloudUser = CloudUsers.LiranCloud;
+//        cloudUser = CloudUsers.LiranWindowsCloud;
         //T: 2. Choose on what devices to run: (Can add devices SN or Name (without ADB:))
         //TODO: make sure devices can't be added twice
         //TODO: fix that adb: or ios: also work
         //TODO: add option to run on random X devices
         chooseSpesificDevices = false; //**/Choosedevices.add("cvh7n15b04005855");/*Choosedevices.add("ce051715b20f972a02"); Choosedevices.add("668bbfe5");Choosedevices.add("adb:HUAWEI BKL-L09")*/
-        Choosedevices.add("13edf0e");
+        Choosedevices.add("8d141db5");
+        Choosedevices.add("ce051715b20f972a02");
+        Choosedevices.add("899X07061");
+
 
         //T: 3. Choose the run length (Run by time or choose number of Rounds - Or choose the length time you want)
         Runby_NumberOfRounds = false; /**/
-        NumberOfRoundsToRun = 5;
-        TimeToRun = 60 * 60 * 8; //Seconds * minutes * hours
+        NumberOfRoundsToRun = 1;
+        TimeToRun = 60 * 60 * 7; //Seconds * minutes * hours
         //T: 4. choose classes or packages to run with
         testsSuites = TestsSuites.AllTest;
-//        testsSuites = TestsSuites.OneTimeTest;
+//        testsSuites = TestsSuites.NothingTest;
+//        testsSuites = TestsSuites.OnecTimeTest;
 //        testsSuites = TestsSuites.LongRunTest_NoRelease;
 
 
         //T: 5. choose some properties
         BatteryMonitoring = false;
-
-        //NOTE: EnterInput
-        if(EnterInput)
-                getInputFromUser();
-
-        System.err.println("###STARTING...###");
-
 
         //T: ***Start To Prepare The Test***
         startTime = new SimpleDateFormat("dd.MM.yyyy - HH.mm.ss").format(new java.util.Date());
@@ -75,6 +74,15 @@ public class Main {
         infoFile = new Files("Init Info", innerDirectoryPath);
         ErrorFile = new Files("Error File", innerDirectoryPath);
 
+    }
+    public static void main(String[] args) throws Exception {
+        initTheMain();
+
+        //NOTE: EnterInput
+        if (EnterInput)
+            getInputFromUser();
+
+        System.err.println("###STARTING...###");
 
         //T: get devices list and create Hashmap
         String devicesInitInfo = "";
@@ -174,6 +182,7 @@ public class Main {
         Scanner scan = new Scanner(System.in);
 
         printCurrentTunProperties();
+        printRunOptions();
 
         System.err.println("If You Want To Change Press On The Relevant Number");
 
@@ -245,6 +254,21 @@ public class Main {
                     printCurrentTunProperties();
                     break;
 
+                case "-10": //-10. AllTest, All Devices, Grid, 10 Hours
+                    Grid=true;
+                    chooseSpesificDevices=false;
+                    Runby_NumberOfRounds=false;
+                    TimeToRun=60 * 60 * 10;
+                    testsSuites=TestsSuites.valueOf("AllTest");
+                    break;
+
+                case "-9": //-9. OneTimeTest, All Device, Grid, 1 Time
+                    Grid=true;
+                    chooseSpesificDevices=false;
+                    Runby_NumberOfRounds=true;
+                    NumberOfRoundsToRun=1;
+                    testsSuites=TestsSuites.valueOf("OneTimeTest");
+                    break;
             }
             System.err.println("If You Want To Change Press On The Relevant Number");
             input = scan.nextLine();
@@ -286,8 +310,15 @@ public class Main {
         System.out.println("********************");
     }
 
+    public static void printRunOptions(){
+        System.out.println("-10. AllTest, All Devices, Grid, 10 Hours");
+        System.out.println("-9. OneTimeTest, All Device, Grid, 1 Time");
 
-    //***Init Test Vars***
+    }
+
+
+
+        //***Init Test Vars***
     //**Devices**
     protected static List<Device> devices = new ArrayList<>(); // the devices list which we run on
     protected static List<String> Choosedevices = new ArrayList<>(); // the devices SN the user want to run on
@@ -302,6 +333,7 @@ public class Main {
     public static Boolean EnterInput;
     //Tests
     protected static TestsSuites testsSuites;
+
 
 
     //**Local**
@@ -325,8 +357,8 @@ public class Main {
     public static int countTests_pass = 0;
     private static CollectSupportDataThread collectSupportDataThread;
     private static  BeeperControl beep;
-    final public static int CollectEveryX_inMin=40; //Optimal is 30 MIN
-    public static boolean CollectSupportDataVar;
+    final public static int CollectEveryX_inMin=20; //Optimal is 30 MIN
+    public static AtomicBoolean CollectSupportDataVar = new AtomicBoolean(false);
     public static String PrintDevicesInfo;
     public static String PrintDeviceSN;
 
@@ -484,10 +516,11 @@ public class Main {
     }
 
     //run collect support data only if the test is long enough
-    private static void collectSupportData() {
+    private static void collectSupportData() { //with beep
         if ((Runby_NumberOfRounds && NumberOfRoundsToRun >= 30) || (!Runby_NumberOfRounds && TimeToRun >= (60 * 60 * 2))) {
 
-            CollectSupportDataVar=true;
+//            CollectSupportDataVar=true;
+            CollectSupportDataVar.set(true);
             //Check beeper control
             beep = new BeeperControl();
             beep.WakeEveryHour();
@@ -501,7 +534,7 @@ public class Main {
 
     }
 
-    public static void sout(String type, String output){ //print and add to file "error file"
+    public static void sout(String type, String output)throws NullPointerException{ //print and add to file "error file"
         //if using ! in the type - it will be printes in red in the console
         if(type.toLowerCase().contains("!")){
             System.err.println(Main.ErrorFile.addRowToReport(type,output));

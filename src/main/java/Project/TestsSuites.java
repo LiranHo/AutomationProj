@@ -20,10 +20,11 @@ public enum TestsSuites {
     EriBankInstrumented("Project.Tests.EriBank_Tests.Instrumented_Eribank_Tests"),
     WebTests("Project.Tests.WebTests"),
     AllTest("Project.Tests"),
-    OneTimeTest(Project.Tests.WebTests.Webtest_test3_HybridElement.class),
+    OneTimeTest(Project.Tests.UiCatalog_Tests.UiCatalog_Instrumented.class),
     LongRunTest_NoRelease(LongRunTestWithoutReleaseOriginal.class),
     BaseTest_LongRun(Project.LongRun.BaseTest_LongRun.class),
     NothingTest(Project.Tests.NothingTest.class), /*Check the code environment without actual test*/
+    Maintenance("Project.Maintenance"),
 
 
     //Examples
@@ -67,6 +68,7 @@ public enum TestsSuites {
     public String toString(){
         return this.name();
     }
+
 }
 
 
