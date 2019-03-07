@@ -121,8 +121,14 @@ public class BaseTest {
             }
             reportURL = client.generateReport(false);
             //create collect support data every X time
-            CollectSupportDataFromBeep(this.getClass().getName());
+            try {
+                CollectSupportDataFromBeep(this.getClass().getName());
+            }catch (Exception e){
+                Main.sout("Exception!","CollectSupportDataFromBeep failed"+ e.getMessage());
+            }
+            Main.sout("Info","client.releaseClient() Start: "+device.getSerialnumber());
             client.releaseClient();
+            Main.sout("Info","client.releaseClient() End: "+device.getSerialnumber());
         } catch (Exception e) {
             Main.sout("Exception", "tearDown Failed \t" + e.getMessage());
 

@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Random;
 
 public class LongRunTestWithoutReleaseOriginal extends BaseTest{
-        static boolean longRun=true;
-        static boolean adb_commands_parallel=false;
+        static boolean longRun=false;
+        static boolean adb_commands_parallel=true;
 
 //        long startTime = System.currentTimeMillis();
         long endTime;

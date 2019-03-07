@@ -39,6 +39,7 @@ public class Main {
         Grid = true;
         cloudUser = CloudUsers.LiranCloud;
 //        cloudUser = CloudUsers.LiranWindowsCloud;
+//        cloudUser = CloudUsers.AdminDeepCloud;
         //T: 2. Choose on what devices to run: (Can add devices SN or Name (without ADB:))
         //TODO: make sure devices can't be added twice
         //TODO: fix that adb: or ios: also work
@@ -52,7 +53,7 @@ public class Main {
         //T: 3. Choose the run length (Run by time or choose number of Rounds - Or choose the length time you want)
         Runby_NumberOfRounds = false; /**/
         NumberOfRoundsToRun = 1;
-        TimeToRun = 60 * 60 * 7; //Seconds * minutes * hours
+        TimeToRun = 60 * 60 * 5; //Seconds * minutes * hours
         //T: 4. choose classes or packages to run with
         testsSuites = TestsSuites.AllTest;
 //        testsSuites = TestsSuites.NothingTest;
@@ -344,6 +345,7 @@ public class Main {
     //**Grid**
     public static CloudUsers cloudUser;
 
+
     //**Report**
     public static String projectBaseDirectory = "E:\\Reports\\Main Project Test Report";
     public static String Repository_project = "C:\\Users\\liran.hochman\\workspace\\project2";
@@ -526,7 +528,7 @@ public class Main {
             beep.WakeEveryHour();
 
          // ############
-            //disable collect supprt data for now
+            //disable collect support data for now
             System.err.println("(!) collectSupportDataThread is disabled");
             //collectSupportDataThread = new CollectSupportDataThread();
             //collectSupportDataThread.start();

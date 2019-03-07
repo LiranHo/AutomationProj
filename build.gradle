@@ -36,5 +36,8 @@ dependencies {
     compile 'io.github.glytching:junit-extensions:2.3.0'
 
     compile group: 'io.appium', name: 'java-client', version: '6.1.0'
-    //compile group: 'com.experitest', name: 'appium-seetest-extension', version: '+'
+   //compile group: 'com.experitest', name: 'appium-seetest-extension', version: '+'
+    
+    
+
 }
