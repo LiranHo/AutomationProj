@@ -9,7 +9,10 @@ public enum CloudUsers {
     LiranQaCloud("liranh","Experitest2012", "default", true,"qacloud.experitest.com", 443),
     LiranMasterCloud("liranh","Experitest2012", "default", true,"mastercloud.experitest.com", 443),
     LiranReleaseCloud("liranh","Experitest2012", "default", true,"releasecloud.experitest.com", 443),
-    LiranWindowsCloud("admin","Experitest2012", "default", false,"192.168.2.225", 80),
+    LiranWindowsCloud("liranh","Experitest2012", "default", false,"192.168.2.225", 80),
+    AdminDeepCloud("admin","Experitest2012", "default", true,"qa-win2016.experitest.com", 443),
+    KBC_Cloud("Experitest_rnd2","Aa123456", "default", true,"kbc.experitest.com", 443),
+    Ortals_Cloud("admin","Aa123456", "default", false,"192.168.2.191", 80),
 
     ;
 
